@@ -4,8 +4,11 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
+    id("com.gradle.plugin-publish") version "0.9.8"
     id("net.minecrell.licenser") version "0.3"
 }
+
+val url: String by extra
 
 repositories {
     jcenter()
@@ -42,6 +45,24 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             artifact(sourceJar)
+        }
+    }
+}
+
+pluginBundle {
+    website = url
+    vcsUrl = url
+    description = project.description
+    tags = listOf("bukkit", "bungee")
+
+    (plugins) {
+        "bukkit" {
+            id = "net.minecrell.plugin-yml.bukkit"
+            displayName = "plugin-yml (Bukkit)"
+        }
+        "bungee" {
+            id = "net.minecrell.plugin-yml.bungee"
+            displayName = "plugin-yml (Bungee)"
         }
     }
 }

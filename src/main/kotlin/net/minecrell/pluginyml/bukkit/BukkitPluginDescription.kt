@@ -37,6 +37,7 @@ class BukkitPluginDescription(project: Project) : Serializable {
     var main: String? = null
     var description: String? = null
     var load: PluginLoadOrder? = null
+    var author: String? = null
     var authors: List<String>? = null
     var website: String? = null
     var depend: List<String>? = null

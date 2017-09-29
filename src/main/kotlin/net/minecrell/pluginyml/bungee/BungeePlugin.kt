@@ -35,7 +35,7 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
-        // TODO: Author
+        description.author = description.author ?: project.findProperty("author")?.toString()
     }
 
     override fun validate(description: BungeePluginDescription) {

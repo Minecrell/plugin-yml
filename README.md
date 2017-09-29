@@ -14,6 +14,7 @@ name, version or description) and additional properties can be added using a sim
 | Plugin version | Project version |
 | Plugin description | Project description |
 | Plugin URL (Bukkit only) | `url` project property |
+| Plugin author | `author` project property |
 
 ### Bukkit
 
@@ -30,13 +31,14 @@ bukkit {
     // version = '1.0'
     // description = 'This is a test plugin'
     // website = 'https://example.com'
+    // author = 'Notch'
     
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
     
     // Other possible properties from plugin.yml (optional)
     load = 'STARTUP' // or 'POSTWORLD' 
-    authors = ['Notch']
+    authors = ['Notch', 'Notch2']
     depend = ['WorldEdit']
     softDepend = ['Essentials']
     loadBefore = ['BrokenPlugin']
@@ -79,13 +81,14 @@ bukkit {
     // version = "1.0"
     // description = "This is a test plugin"
     // website = "https://example.com"
+    // author = "Notch"
     
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
     
     // Other possible properties from plugin.yml (optional)
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
-    authors = listOf("Notch")
+    authors = listOf("Notch", "Notch2")
     depend = listOf("WorldEdit")
     softDepend = listOf("Essentials")
     loadBefore = listOf("BrokenPlugin")

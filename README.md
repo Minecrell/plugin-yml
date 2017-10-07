@@ -22,7 +22,7 @@ name, version or description) and additional properties can be added using a sim
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bukkit' version '0.2.0' 
+    id 'net.minecrell.plugin-yml.bukkit' version '0.2.1'
 }
 
 bukkit {
@@ -72,7 +72,7 @@ bukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bukkit") version "0.2.0" 
+    id("net.minecrell.plugin-yml.bukkit") version "0.2.1"
 }
 
 bukkit {
@@ -124,7 +124,7 @@ bukkit {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bungee' version '0.2.0' 
+    id 'net.minecrell.plugin-yml.bungee' version '0.2.1'
 }
 
 bungee {
@@ -147,7 +147,7 @@ bungee {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bungee") version "0.2.0" 
+    id("net.minecrell.plugin-yml.bungee") version "0.2.1"
 }
 
 bungee {

@@ -25,7 +25,7 @@ package net.minecrell.pluginyml
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.task
@@ -53,7 +53,7 @@ abstract class PlatformPlugin<T : Serializable>(private val platformName: String
                 prepare(project, description)
             }
 
-            plugins.withType<JavaBasePlugin> {
+            plugins.withType<JavaPlugin> {
                 val processResources: AbstractCopyTask by tasks
                 processResources.from(generateTask)
             }

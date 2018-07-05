@@ -37,6 +37,10 @@ gradlePlugin {
             id = "net.minecrell.plugin-yml.bungee"
             implementationClass = "net.minecrell.pluginyml.bungee.BungeePlugin"
         }
+        "nukkit" {
+            id = "net.minecrell.plugin-yml.nukkit"
+            implementationClass = "net.minecrell.pluginyml.nukkit.NukkitPlugin"
+        }
     }
 }
 
@@ -53,7 +57,7 @@ pluginBundle {
     website = url
     vcsUrl = url
     description = project.description
-    tags = listOf("bukkit", "bungee")
+    tags = listOf("bukkit", "bungee", "nukkit")
 
     (plugins) {
         "bukkit" {
@@ -63,6 +67,10 @@ pluginBundle {
         "bungee" {
             id = "net.minecrell.plugin-yml.bungee"
             displayName = "plugin-yml (Bungee)"
+        }
+        "nukkit" {
+            id = "net.minecrell.plugin-yml.nukkit"
+            displayName = "plugin-yml (Nukkit)"
         }
     }
 }

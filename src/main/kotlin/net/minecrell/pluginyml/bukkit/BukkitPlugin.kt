@@ -53,6 +53,13 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
         if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
+
+        for (command in description.commands) {
+            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
+            command.aliases?.forEach { alias ->
+                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
+            }
+        }
     }
 
 }

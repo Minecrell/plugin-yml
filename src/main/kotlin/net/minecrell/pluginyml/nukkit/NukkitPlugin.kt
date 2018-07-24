@@ -48,6 +48,13 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
         if (main.startsWith("cn.nukkit.")) throw InvalidPluginDescriptionException("Main class cannot be within cn.nukkit. package")
 
         if (description.api?.isEmpty() != false) throw InvalidPluginDescriptionException("Nukkit API version is not set")
+
+        for (command in description.commands) {
+            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
+            command.aliases?.forEach { alias ->
+                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
+            }
+        }
     }
 
 }

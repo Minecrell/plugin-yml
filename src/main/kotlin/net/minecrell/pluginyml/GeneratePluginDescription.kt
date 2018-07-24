@@ -56,7 +56,7 @@ open class GeneratePluginDescription : DefaultTask() {
 
         val mapper = ObjectMapper(factory)
             .registerKotlinModule()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
 
         mapper.writeValue(outputFile, pluginDescription)
     }

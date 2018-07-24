@@ -191,7 +191,7 @@ plugins {
     id 'net.minecrell.plugin-yml.nukkit' version '0.3.0'
 }
 
-bukkit {
+nukkit {
     // Default values can be overridden if needed
     // name = 'TestPlugin'
     // version = '1.0'
@@ -223,11 +223,13 @@ bukkit {
     
     permissions {
         'testplugin.*' {
-            children = ['testplugin.test']
-        }
-        'testplugin.test' {
-            description = 'Allows you to run the test command'
-            setDefault('OP') // 'TRUE', 'FALSE', 'OP' or 'NOT_OP'
+            description = 'Allows you to run all testplugin commands'
+            children {
+                'testplugin.test' {
+                    description = 'Allows you to run the test command'
+                    setDefault('OP') // 'TRUE', 'FALSE', 'OP' or 'NOT_OP'
+                }
+            }
         }
     }
 }
@@ -242,7 +244,7 @@ plugins {
     id("net.minecrell.plugin-yml.nukkit") version "0.3.0"
 }
 
-bukkit {
+nukkit {
     // Default values can be overridden if needed
     // name = "TestPlugin"
     // version = "1.0"
@@ -274,11 +276,13 @@ bukkit {
     
     permissions {
         "testplugin.*" {
-            children = listOf("testplugin.test")
-        }
-        "testplugin.test" {
-            description = "Allows you to run the test command"
-            default = NukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+            description = "Allows you to run all testplugin commands"
+            children {
+                "testplugin.test" {
+                    description = "Allows you to run the test command"
+                    default = NukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+                }            
+            }
         }
     }
 }

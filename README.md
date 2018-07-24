@@ -36,6 +36,9 @@ bukkit {
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
     
+    // API version (should be set for 1.13+)
+    apiVersion = '1.13'
+    
     // Other possible properties from plugin.yml (optional)
     load = 'STARTUP' // or 'POSTWORLD' 
     authors = ['Notch', 'Notch2']
@@ -85,6 +88,9 @@ bukkit {
     
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
+    
+    // API version (should be set for 1.13+)
+    apiVersion = "1.13"
     
     // Other possible properties from plugin.yml (optional)
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 

@@ -31,6 +31,7 @@ import java.io.Serializable
 
 class BukkitPluginDescription(project: Project) : Serializable {
 
+    @JsonProperty("api-version") var apiVersion: String? = null
     var name: String? = null
     var version: String? = null
     var main: String? = null

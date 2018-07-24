@@ -32,6 +32,7 @@ import org.gradle.api.Project
 import java.io.Serializable
 
 class NukkitPluginDescription(project: Project) : Serializable {
+
     var name: String? = null
     var main: String? = null
     var version: String? = null
@@ -45,7 +46,6 @@ class NukkitPluginDescription(project: Project) : Serializable {
     @JsonProperty("softdepend") var softDepend: List<String>? = null
     @JsonProperty("loadbefore") var loadBefore: List<String>? = null
     var prefix: String? = null
-    @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
 
     // DSL provider for commands and permissions (not serialized)
     @Transient @JsonIgnore
@@ -103,4 +103,5 @@ class NukkitPluginDescription(project: Project) : Serializable {
             @JsonProperty("!op")    NOT_OP
         }
     }
+
 }

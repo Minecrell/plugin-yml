@@ -35,7 +35,7 @@ abstract class PlatformPlugin<T : Serializable>(private val platformName: String
 
     protected abstract fun createExtension(project: Project): T
 
-    override final fun apply(project: Project) {
+    final override fun apply(project: Project) {
         project.run {
             val description = createExtension(this)
 

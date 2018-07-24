@@ -19,7 +19,7 @@ dependencies {
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.6")
 }
 
-var sourceJar = task<Jar>("sourceJar") {
+val sourceJar = task<Jar>("sourceJar") {
     classifier = "sources"
     from(java.sourceSets["main"].allSource)
 }

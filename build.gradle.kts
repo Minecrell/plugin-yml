@@ -4,21 +4,21 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.9.8"
+    id("com.gradle.plugin-publish") version "0.9.10"
     id("net.minecrell.licenser") version "0.3"
 }
 
 val url: String by extra
 
 repositories {
-    jcenter()
+    gradlePluginPortal()
 }
 
 dependencies {
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.1") {
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.1")
+    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.6")
 }
 
 var sourceJar = task<Jar>("sourceJar") {
@@ -74,7 +74,3 @@ pluginBundle {
         }
     }
 }
-
-// Workaround for https://github.com/gradle/kotlin-dsl/issues/509
-configurations.compile.run { setExtendsFrom(extendsFrom.minus<Configuration>(configurations.embeddedKotlin)) }
-configurations.compileOnly.extendsFrom(configurations.embeddedKotlin)

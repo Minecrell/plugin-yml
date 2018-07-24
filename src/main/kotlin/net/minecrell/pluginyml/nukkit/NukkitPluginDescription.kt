@@ -104,4 +104,3 @@ class NukkitPluginDescription(project: Project) : Serializable {
         }
     }
 }
-

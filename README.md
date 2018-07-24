@@ -1,7 +1,8 @@
 # plugin-yml
 [plugin-yml] is a simple Gradle plugin that generates the `plugin.yml` plugin description file for Bukkit plugins,
-`bungee.yml` for Bungee plugins or `nukkit.yml` for Nukkit plugins based on the Gradle project. Various properties are set automatically (e.g. project
-name, version or description) and additional properties can be added using a simple DSL.
+`bungee.yml` for Bungee plugins or `nukkit.yml` for Nukkit plugins based on the Gradle project. Various properties
+are set automatically (e.g. project name, version or description) and additional properties can be added using a
+simple DSL.
 
 ## Usage
 [plugin-yml] requires at least **Gradle 4.2**. Using the latest version of Gradle is recommended.
@@ -18,7 +19,8 @@ name, version or description) and additional properties can be added using a sim
 
 ### Bukkit
 
-#### Groovy
+<details>
+<summary><strong>Groovy</strong></summary>
 
 ```groovy
 plugins {
@@ -70,8 +72,10 @@ bukkit {
     }
 }
 ```
+</details>
 
-#### kotlin-dsl
+<details>
+<summary><strong>kotlin-dsl</strong></summary>
 
 ```kotlin
 plugins {
@@ -123,10 +127,12 @@ bukkit {
     }
 }
 ```
+</details>
 
 ### Bungee
 
-#### Groovy
+<details>
+<summary><strong>Groovy</strong></summary>
 
 ```groovy
 plugins {
@@ -148,8 +154,10 @@ bungee {
     softDepends = ['ServerListPlus']
 }
 ```
+</details>
 
-#### kotlin-dsl
+<details>
+<summary><strong>kotlin-dsl</strong></summary>
 
 ```kotlin
 plugins {
@@ -171,10 +179,12 @@ bungee {
     softDepends = setOf("ServerListPlus")
 }
 ```
+</details>
 
 ### Nukkit
 
-#### Groovy
+<details>
+<summary><strong>Groovy</strong></summary>
 
 ```groovy
 plugins {
@@ -222,8 +232,10 @@ bukkit {
     }
 }
 ```
+</details>
 
-#### kotlin-dsl
+<details>
+<summary><strong>kotlin-dsl</strong></summary>
 
 ```kotlin
 plugins {
@@ -271,5 +283,6 @@ bukkit {
     }
 }
 ```
+</details>
 
 [plugin-yml]: https://github.com/Minecrell/plugin-yml

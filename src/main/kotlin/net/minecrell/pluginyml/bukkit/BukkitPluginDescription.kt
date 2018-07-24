@@ -65,7 +65,7 @@ class BukkitPluginDescription(project: Project) : Serializable {
         POSTWORLD
     }
 
-    data class Command(@Transient val name: String) : Serializable {
+    data class Command(@Transient @JsonIgnore val name: String) : Serializable {
         var description: String? = null
         var aliases: List<String>? = null
         var permission: String? = null
@@ -73,7 +73,7 @@ class BukkitPluginDescription(project: Project) : Serializable {
         var usage: String? = null
     }
 
-    data class Permission(@Transient val name: String) : Serializable {
+    data class Permission(@Transient @JsonIgnore val name: String) : Serializable {
         var description: String? = null
         var default: Default? = null
         var children: List<String>? = null

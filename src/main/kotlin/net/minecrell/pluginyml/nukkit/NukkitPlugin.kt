@@ -40,21 +40,14 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
     }
 
     override fun validate(description: NukkitPluginDescription) {
-        if (description.name == null) {
-            throw InvalidPluginDescriptionException("Plugin name is not set")
-        }
+        if (description.name.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin name is not set")
+        if (description.version.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin version class is not set")
 
-        if (description.main == null) {
-            throw InvalidPluginDescriptionException("Main class is not defined")
-        }
+        val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
+        if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
+        if (main.startsWith("cn.nukkit.")) throw InvalidPluginDescriptionException("Main class cannot be within cn.nukkit. package")
 
-        if (description.version == null) {
-            throw InvalidPluginDescriptionException("Plugin version class is not set")
-        }
-
-        if (description.api == null || description.api!!.isEmpty()) {
-            throw InvalidPluginDescriptionException("Nukkit API version is not set")
-        }
+        if (description.api?.isEmpty() != false) throw InvalidPluginDescriptionException("Nukkit API version is not set")
     }
 
 }

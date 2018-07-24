@@ -40,13 +40,8 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
     }
 
     override fun validate(description: BungeePluginDescription) {
-        if (description.name == null) {
-            throw InvalidPluginDescriptionException("Plugin name is not set")
-        }
-
-        if (description.main == null) {
-            throw InvalidPluginDescriptionException("Main class is not defined")
-        }
+        if (description.name.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin name is not set")
+        if (description.main.isNullOrEmpty()) throw InvalidPluginDescriptionException("Main class is not defined")
     }
 
 }

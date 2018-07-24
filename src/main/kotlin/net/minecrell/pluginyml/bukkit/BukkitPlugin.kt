@@ -30,6 +30,10 @@ import org.gradle.api.Project
 
 class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.yml") {
 
+    companion object {
+        @JvmStatic private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+    }
+
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
 
     override fun setDefaults(project: Project, description: BukkitPluginDescription) {
@@ -41,13 +45,14 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
     }
 
     override fun validate(description: BukkitPluginDescription) {
-        if (description.name == null) {
-            throw InvalidPluginDescriptionException("Plugin name is not set")
-        }
+        val name = description.name ?: throw InvalidPluginDescriptionException("Plugin name is not set")
+        if (!VALID_NAME.matches(name)) throw InvalidPluginDescriptionException("Invalid plugin name: should match $VALID_NAME")
 
-        if (description.main == null) {
-            throw InvalidPluginDescriptionException("Main class is not defined")
-        }
+        if (description.version.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin version is not set")
+
+        val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
+        if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
+        if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
     }
 
 }

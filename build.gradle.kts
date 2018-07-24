@@ -1,5 +1,3 @@
-import org.gradle.api.tasks.bundling.Jar
-
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`

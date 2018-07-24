@@ -61,14 +61,17 @@ pluginBundle {
         "bukkit" {
             id = "net.minecrell.plugin-yml.bukkit"
             displayName = "plugin-yml (Bukkit)"
+            description = "Generate plugin.yml for Bukkit plugins based on the Gradle project"
         }
         "bungee" {
             id = "net.minecrell.plugin-yml.bungee"
-            displayName = "plugin-yml (Bungee)"
+            displayName = "plugin-yml (BungeeCord)"
+            description = "Generate bungee.yml for BungeeCord plugins based on the Gradle project"
         }
         "nukkit" {
             id = "net.minecrell.plugin-yml.nukkit"
             displayName = "plugin-yml (Nukkit)"
+            description = "Generate nukkit.yml for Nukkit plugins based on the Gradle project"
         }
     }
 }

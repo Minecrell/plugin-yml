@@ -129,7 +129,7 @@ bukkit {
 ```
 </details>
 
-### Bungee
+### BungeeCord
 
 <details>
 <summary><strong>Groovy</strong></summary>

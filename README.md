@@ -106,7 +106,7 @@ bukkit {
     defaultPermission = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
     
     commands {
-        "test" {
+        register("test") {
             description = "This is a test command!"
             aliases = listOf("t")
             permission = "testplugin.test"
@@ -117,10 +117,10 @@ bukkit {
     }
     
     permissions {
-        "testplugin.*" {
+        register("testplugin.*") {
             children = listOf("testplugin.test")
         }
-        "testplugin.test" {
+        register("testplugin.test") {
             description = "Allows you to run the test command"
             default = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
         }
@@ -265,7 +265,7 @@ nukkit {
     prefix = "TEST"
     
     commands {
-        "test" {
+        register("test") {
             description = "This is a test command!"
             aliases = listOf("t")
             permission = "testplugin.test"
@@ -275,7 +275,7 @@ nukkit {
     }
     
     permissions {
-        "testplugin.*" {
+        register("testplugin.*") {
             description = "Allows you to run all testplugin commands"
             children {
                 "testplugin.test" {

@@ -60,6 +60,10 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
                 if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
             }
         }
+
+        if (description.provides?.all(VALID_NAME::matches)?.not() == true) {
+            throw InvalidPluginDescriptionException("Invalid plugin provides name: all should match $VALID_NAME")
+        }
     }
 
 }

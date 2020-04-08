@@ -212,7 +212,7 @@ nukkit {
     prefix = 'TEST'
     
     commands {
-        test {
+        'test' {
             description = 'This is a test command!'
             aliases = ['t']
             permission = 'testplugin.test'

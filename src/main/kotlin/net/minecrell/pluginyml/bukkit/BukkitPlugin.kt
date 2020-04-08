@@ -61,7 +61,7 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
             }
         }
 
-        if (description.provides?.all(VALID_NAME::matches)?.not() == true) {
+        if (description.provides?.all(VALID_NAME::matches) == false) {
             throw InvalidPluginDescriptionException("Invalid plugin provides name: all should match $VALID_NAME")
         }
     }

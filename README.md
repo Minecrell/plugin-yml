@@ -63,7 +63,9 @@ bukkit {
     
     permissions {
         'testplugin.*' {
-            children = ['testplugin.test']
+            children = ['testplugin.test'] // Defaults permissions to true
+            // You can also specify the values of the permissions
+            childrenMap = ['testplugin.test': false]
         }
         'testplugin.test' {
             description = 'Allows you to run the test command'
@@ -118,7 +120,9 @@ bukkit {
     
     permissions {
         "testplugin.*" {
-            children = listOf("testplugin.test")
+            children = listOf("testplugin.test") // Defaults permissions to true
+            // You can also specify the values of the permissions
+            childrenMap = mapOf("testplugin.test" to true)
         }
         "testplugin.test" {
             description = "Allows you to run the test command"

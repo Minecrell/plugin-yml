@@ -49,17 +49,17 @@ class NukkitPluginDescription(project: Project) : Serializable {
 
     // DSL provider for commands and permissions (not serialized)
     @Transient @JsonIgnore
-    val commands: NamedDomainObjectContainer<NukkitPluginDescription.Command> = project.container(NukkitPluginDescription.Command::class.java)
+    val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
     @Transient @JsonIgnore
-    val permissions: NamedDomainObjectContainer<NukkitPluginDescription.Permission> = project.container(NukkitPluginDescription.Permission::class.java) {
+    val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
         Permission(project, it)
     }
 
     // Java/Jackson serialization for commands and permissions
-    internal val commandMap: Map<String, NukkitPluginDescription.Command> = commands.asMap
-        @JsonProperty("commands") get() = field.toMap() // Return copy
-    internal val permissionMap: Map<String, NukkitPluginDescription.Permission> = permissions.asMap
-        @JsonProperty("permissions") get() = field.toMap() // Return copy
+    internal val commandMap: Map<String, Command>
+        @JsonProperty("commands") get() = commands.associateBy { it.name }
+    internal val permissionMap: Map<String, Permission>
+        @JsonProperty("permissions") get() = permissions.associateBy { it.name }
 
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
@@ -85,13 +85,13 @@ class NukkitPluginDescription(project: Project) : Serializable {
 
         // DSL provider for recursive children (not serialized)
         @Transient @JsonIgnore
-        val children: NamedDomainObjectContainer<NukkitPluginDescription.Permission> = project.container(NukkitPluginDescription.Permission::class.java) {
+        val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
             Permission(project, it)
         }
 
         // Java/Jackson serialization for commands and permissions
-        internal val childrenMap: Map<String, NukkitPluginDescription.Permission> = children.asMap
-            @JsonProperty("children") get() = field.toMap() // Return copy
+        internal val childrenMap: Map<String, Permission>
+            @JsonProperty("children") get() = children.associateBy { it.name }
 
         // For Groovy DSL
         fun children(closure: Closure<Unit>) = children.configure(closure)

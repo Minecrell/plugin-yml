@@ -54,10 +54,10 @@ class BukkitPluginDescription(project: Project) : Serializable {
     @Transient @JsonIgnore val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
     // Java/Jackson serialization for commands and permissions
-    internal val commandMap: Map<String, Command> = commands.asMap
-        @JsonProperty("commands") get() = field.toMap() // Return copy
-    internal val permissionMap: Map<String, Permission> = permissions.asMap
-        @JsonProperty("permissions") get() = field.toMap() // Return copy
+    internal val commandMap: Map<String, Command>
+        @JsonProperty("commands") get() = commands.associateBy { it.name }
+    internal val permissionMap: Map<String, Permission>
+        @JsonProperty("permissions") get() = permissions.associateBy { it.name }
 
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
@@ -82,7 +82,7 @@ class BukkitPluginDescription(project: Project) : Serializable {
         var children: List<String>?
             @JsonIgnore get() = childrenMap?.filterValues { it }?.keys?.toList()
             set(value) {
-                childrenMap = value?.associate { it to true }
+                childrenMap = value?.associateWith { true }
             }
         @JsonProperty("children") var childrenMap: Map<String, Boolean>? = null
 

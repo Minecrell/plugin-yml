@@ -47,7 +47,7 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
         if (main.startsWith("cn.nukkit.")) throw InvalidPluginDescriptionException("Main class cannot be within cn.nukkit. package")
 
-        if (description.api?.isEmpty() != false) throw InvalidPluginDescriptionException("Nukkit API version is not set")
+        if (description.api.isNullOrEmpty()) throw InvalidPluginDescriptionException("Nukkit API version is not set")
 
         for (command in description.commands) {
             if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")

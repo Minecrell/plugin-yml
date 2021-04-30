@@ -27,39 +27,34 @@ package net.minecrell.pluginyml.nukkit
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.lang.Closure
+import net.minecrell.pluginyml.PluginDescription
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import java.io.Serializable
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 
-class NukkitPluginDescription(project: Project) : Serializable {
+class NukkitPluginDescription(project: Project) : PluginDescription {
 
-    var name: String? = null
-    var main: String? = null
-    var version: String? = null
-    var api: List<String>? = null
-    var description: String? = null
-    var load: PluginLoadOrder? = null
-    var author: String? = null
-    var authors: List<String>? = null
-    var website: String? = null
-    var depend: List<String>? = null
-    @JsonProperty("softdepend") var softDepend: List<String>? = null
-    @JsonProperty("loadbefore") var loadBefore: List<String>? = null
-    var prefix: String? = null
+    @Input var name: String? = null
+    @Input var main: String? = null
+    @Input var version: String? = null
+    @Input var api: List<String>? = null
+    @Input @Optional var description: String? = null
+    @Input @Optional var load: PluginLoadOrder? = null
+    @Input @Optional var author: String? = null
+    @Input @Optional var authors: List<String>? = null
+    @Input @Optional var website: String? = null
+    @Input @Optional var depend: List<String>? = null
+    @Input @Optional @JsonProperty("softdepend") var softDepend: List<String>? = null
+    @Input @Optional @JsonProperty("loadbefore") var loadBefore: List<String>? = null
+    @Input @Optional var prefix: String? = null
 
-    // DSL provider for commands and permissions (not serialized)
-    @Transient @JsonIgnore
-    val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
-    @Transient @JsonIgnore
-    val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
+    @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
+    @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
         Permission(project, it)
     }
-
-    // Java/Jackson serialization for commands and permissions
-    internal val commandMap: Map<String, Command>
-        @JsonProperty("commands") get() = commands.associateBy { it.name }
-    internal val permissionMap: Map<String, Permission>
-        @JsonProperty("permissions") get() = permissions.associateBy { it.name }
 
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
@@ -70,28 +65,22 @@ class NukkitPluginDescription(project: Project) : Serializable {
         POSTWORLD
     }
 
-    data class Command(@Transient @JsonIgnore val name: String) : Serializable {
-        var description: String? = null
-        var aliases: List<String>? = null
-        var permission: String? = null
-        @JsonProperty("permission-message") var permissionMessage: String? = null
-        var usage: String? = null
+    data class Command(@Input @JsonIgnore val name: String) {
+        @Input @Optional var description: String? = null
+        @Input @Optional var aliases: List<String>? = null
+        @Input @Optional var permission: String? = null
+        @Input @Optional @JsonProperty("permission-message") var permissionMessage: String? = null
+        @Input @Optional var usage: String? = null
     }
 
-    data class Permission(@Transient @JsonIgnore val project: Project, @Transient @JsonIgnore val name: String) : Serializable {
+    data class Permission(@Internal @JsonIgnore val project: Project, @Input @JsonIgnore val name: String) {
 
-        var description: String? = null
-        var default: Default? = null
+        @Input @Optional var description: String? = null
+        @Input @Optional var default: Default? = null
 
-        // DSL provider for recursive children (not serialized)
-        @Transient @JsonIgnore
-        val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
+        @Nested val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
             Permission(project, it)
         }
-
-        // Java/Jackson serialization for commands and permissions
-        internal val childrenMap: Map<String, Permission>
-            @JsonProperty("children") get() = children.associateBy { it.name }
 
         // For Groovy DSL
         fun children(closure: Closure<Unit>) = children.configure(closure)

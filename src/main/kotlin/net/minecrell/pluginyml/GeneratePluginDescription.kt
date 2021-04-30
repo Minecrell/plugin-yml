@@ -26,26 +26,34 @@ package net.minecrell.pluginyml
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.std.StdDelegatingSerializer
+import com.fasterxml.jackson.databind.util.Converter
+import com.fasterxml.jackson.databind.util.StdConverter
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.io.File
-import java.io.Serializable
 
 open class GeneratePluginDescription : DefaultTask() {
 
     @Input
-    var fileName: String? = null
+    val fileName: Property<String> = project.objects.property()
 
-    @Input
-    var pluginDescription: Serializable? = null
+    @Nested
+    val pluginDescription: Property<PluginDescription> = project.objects.property()
 
-    val outputFile: File
-        @OutputFile get() = File(temporaryDir, fileName)
+    val outputFile: Provider<File>
+        @OutputFile get() = fileName.map { File(temporaryDir, it) }
 
     @TaskAction
     fun generate() {
@@ -54,11 +62,24 @@ open class GeneratePluginDescription : DefaultTask() {
             .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
             .enable(YAMLGenerator.Feature.INDENT_ARRAYS)
 
+        val module = SimpleModule()
+        @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...
+        module.addSerializer(StdDelegatingSerializer(NamedDomainObjectCollection::class.java,
+            NamedDomainObjectCollectionConverter as Converter<NamedDomainObjectCollection<*>, *>))
+
         val mapper = ObjectMapper(factory)
             .registerKotlinModule()
+            .registerModule(module)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
 
-        mapper.writeValue(outputFile, pluginDescription)
+        mapper.writeValue(outputFile.get(), pluginDescription.get())
+    }
+
+    object NamedDomainObjectCollectionConverter : StdConverter<NamedDomainObjectCollection<Any>, Map<String, Any>>()  {
+        override fun convert(value: NamedDomainObjectCollection<Any>): Map<String, Any> {
+            val namer = value.namer
+            return value.associateBy { namer.determineName(it) }
+        }
     }
 
 }

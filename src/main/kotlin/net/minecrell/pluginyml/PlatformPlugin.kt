@@ -31,9 +31,8 @@ import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
-import java.io.Serializable
 
-abstract class PlatformPlugin<T : Serializable>(private val platformName: String, private val fileName: String) : Plugin<Project> {
+abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) : Plugin<Project> {
 
     protected abstract fun createExtension(project: Project): T
 
@@ -46,11 +45,14 @@ abstract class PlatformPlugin<T : Serializable>(private val platformName: String
 
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
-                fileName = this@PlatformPlugin.fileName
-                pluginDescription = description
+                fileName.set(this@PlatformPlugin.fileName)
+                pluginDescription.set(provider {
+                    setDefaults(project, description)
+                    description
+                })
 
                 doFirst {
-                    prepare(project, description)
+                    validate(description)
                 }
             }
 
@@ -60,11 +62,6 @@ abstract class PlatformPlugin<T : Serializable>(private val platformName: String
                 }
             }
         }
-    }
-
-    private fun prepare(project: Project, description: T) {
-        setDefaults(project, description)
-        validate(description)
     }
 
     protected abstract fun setDefaults(project: Project, description: T)

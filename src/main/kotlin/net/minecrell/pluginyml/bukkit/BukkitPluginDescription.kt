@@ -79,10 +79,10 @@ class BukkitPluginDescription(project: Project) : Serializable {
     data class Permission(@Transient @JsonIgnore val name: String) : Serializable {
         var description: String? = null
         var default: Default? = null
-        var children: List<String>? // No @[Transient JsonIgnore] needed as it has no backing value
-            get() = childrenMap?.filterValues { it }?.keys?.toList()
+        var children: List<String>?
+            @JsonIgnore get() = childrenMap?.filterValues { it }?.keys?.toList()
             set(value) {
-                childrenMap = value?.map { it to true }?.toMap()
+                childrenMap = value?.associate { it to true }
             }
         @JsonProperty("children") var childrenMap: Map<String, Boolean>? = null
 

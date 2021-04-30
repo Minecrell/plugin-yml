@@ -5,7 +5,7 @@ are set automatically (e.g. project name, version or description) and additional
 simple DSL.
 
 ## Usage
-[plugin-yml] requires at least **Gradle 4.2**. Using the latest version of Gradle is recommended.
+[plugin-yml] requires at least **Gradle 5.0**. Using the latest version of Gradle is recommended.
 
 ### Default values
 
@@ -24,7 +24,7 @@ simple DSL.
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bukkit' version '0.3.0'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.4.0'
 }
 
 bukkit {
@@ -82,7 +82,7 @@ bukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bukkit") version "0.3.0"
+    id("net.minecrell.plugin-yml.bukkit") version "0.4.0"
 }
 
 bukkit {
@@ -142,7 +142,7 @@ bukkit {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bungee' version '0.3.0'
+    id 'net.minecrell.plugin-yml.bungee' version '0.4.0'
 }
 
 bungee {
@@ -167,7 +167,7 @@ bungee {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bungee") version "0.3.0"
+    id("net.minecrell.plugin-yml.bungee") version "0.4.0"
 }
 
 bungee {
@@ -194,7 +194,7 @@ bungee {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.nukkit' version '0.3.0'
+    id 'net.minecrell.plugin-yml.nukkit' version '0.4.0'
 }
 
 nukkit {
@@ -247,7 +247,7 @@ nukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.nukkit") version "0.3.0"
+    id("net.minecrell.plugin-yml.nukkit") version "0.4.0"
 }
 
 nukkit {

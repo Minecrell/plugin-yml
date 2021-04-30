@@ -28,8 +28,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.AbstractCopyTask
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.task
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import java.io.Serializable
 
@@ -45,18 +45,19 @@ abstract class PlatformPlugin<T : Serializable>(private val platformName: String
             extensions.add(platformName.decapitalize(), description)
 
             // Create task
-            val generateTask = task<GeneratePluginDescription>("generate${platformName}PluginDescription") {
+            val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 fileName = this@PlatformPlugin.fileName
                 pluginDescription = description
-            }
 
-            generateTask.doFirst {
-                prepare(project, description)
+                doFirst {
+                    prepare(project, description)
+                }
             }
 
             plugins.withType<JavaPlugin> {
-                val processResources: AbstractCopyTask by tasks
-                processResources.from(generateTask)
+                tasks.named<AbstractCopyTask>("processResources") {
+                    from(generateTask)
+                }
             }
         }
     }

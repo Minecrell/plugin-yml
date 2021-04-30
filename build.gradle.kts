@@ -2,8 +2,8 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.9.10"
-    id("net.minecrell.licenser") version "0.3"
+    id("com.gradle.plugin-publish") version "0.14.0"
+    id("org.cadixdev.licenser") version "0.6.0"
 }
 
 val url: String by extra
@@ -13,30 +13,34 @@ repositories {
 }
 
 dependencies {
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.6") {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.6")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3")
 }
 
-val sourceJar = task<Jar>("sourceJar") {
-    classifier = "sources"
-    from(java.sourceSets["main"].allSource)
+java {
+    withSourcesJar()
 }
-artifacts.add("archives", sourceJar)
 
 gradlePlugin {
-    (plugins) {
-        "bukkit" {
+    plugins {
+        register("bukkit") {
             id = "net.minecrell.plugin-yml.bukkit"
+            displayName = "plugin-yml (Bukkit)"
+            description = "Generate plugin.yml for Bukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bukkit.BukkitPlugin"
         }
-        "bungee" {
+        register("bungee") {
             id = "net.minecrell.plugin-yml.bungee"
+            displayName = "plugin-yml (BungeeCord)"
+            description = "Generate bungee.yml for BungeeCord plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bungee.BungeePlugin"
         }
-        "nukkit" {
+        register("nukkit") {
             id = "net.minecrell.plugin-yml.nukkit"
+            displayName = "plugin-yml (Nukkit)"
+            description = "Generate nukkit.yml for Nukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.nukkit.NukkitPlugin"
         }
     }
@@ -44,9 +48,8 @@ gradlePlugin {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        register<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifact(sourceJar)
         }
     }
 }
@@ -56,22 +59,4 @@ pluginBundle {
     vcsUrl = url
     description = project.description
     tags = listOf("bukkit", "bungee", "nukkit")
-
-    (plugins) {
-        "bukkit" {
-            id = "net.minecrell.plugin-yml.bukkit"
-            displayName = "plugin-yml (Bukkit)"
-            description = "Generate plugin.yml for Bukkit plugins based on the Gradle project"
-        }
-        "bungee" {
-            id = "net.minecrell.plugin-yml.bungee"
-            displayName = "plugin-yml (BungeeCord)"
-            description = "Generate bungee.yml for BungeeCord plugins based on the Gradle project"
-        }
-        "nukkit" {
-            id = "net.minecrell.plugin-yml.nukkit"
-            displayName = "plugin-yml (Nukkit)"
-            description = "Generate nukkit.yml for Nukkit plugins based on the Gradle project"
-        }
-    }
 }

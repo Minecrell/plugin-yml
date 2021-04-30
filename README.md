@@ -284,7 +284,7 @@ nukkit {
         register("testplugin.*") {
             description = "Allows you to run all testplugin commands"
             children {
-                "testplugin.test" {
+                register("testplugin.test") {
                     description = "Allows you to run the test command"
                     default = NukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
                 }            

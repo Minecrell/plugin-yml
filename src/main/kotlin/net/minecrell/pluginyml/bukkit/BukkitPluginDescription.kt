@@ -47,6 +47,7 @@ class BukkitPluginDescription(project: Project) : Serializable {
     @JsonProperty("loadbefore") var loadBefore: List<String>? = null
     var prefix: String? = null
     @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
+    var provides: List<String>? = null
 
     // DSL provider for commands and permissions (not serialized)
     @Transient @JsonIgnore val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)

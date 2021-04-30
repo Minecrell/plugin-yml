@@ -49,6 +49,7 @@ bukkit {
     loadBefore = ['BrokenPlugin']
     prefix = 'TEST'
     defaultPermission = 'OP' // 'TRUE', 'FALSE', 'OP' or 'NOT_OP'
+    provides = ['TestPluginOldName', 'TestPlug']
     
     commands {
         test {
@@ -106,6 +107,7 @@ bukkit {
     loadBefore = listOf("BrokenPlugin")
     prefix = "TEST"
     defaultPermission = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+    provides = listOf("TestPluginOldName", "TestPlug")
     
     commands {
         "test" {

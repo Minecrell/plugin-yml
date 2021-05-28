@@ -35,14 +35,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
-import java.io.File
 
 open class GeneratePluginDescription : DefaultTask() {
 
@@ -52,8 +51,8 @@ open class GeneratePluginDescription : DefaultTask() {
     @Nested
     val pluginDescription: Property<PluginDescription> = project.objects.property()
 
-    val outputFile: Provider<File>
-        @OutputFile get() = fileName.map { File(temporaryDir, it) }
+    @OutputDirectory
+    val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
 
     @TaskAction
     fun generate() {
@@ -72,7 +71,7 @@ open class GeneratePluginDescription : DefaultTask() {
             .registerModule(module)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
 
-        mapper.writeValue(outputFile.get(), pluginDescription.get())
+        mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription.get())
     }
 
     object NamedDomainObjectCollectionConverter : StdConverter<NamedDomainObjectCollection<Any>, Map<String, Any>>()  {

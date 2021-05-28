@@ -27,9 +27,10 @@ package net.minecrell.pluginyml
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.AbstractCopyTask
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 
 abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) : Plugin<Project> {
@@ -43,9 +44,12 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             // Add extension
             extensions.add(platformName.decapitalize(), description)
 
+            val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
+
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 fileName.set(this@PlatformPlugin.fileName)
+                outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)
                     description
@@ -57,8 +61,8 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             }
 
             plugins.withType<JavaPlugin> {
-                tasks.named<AbstractCopyTask>("processResources") {
-                    from(generateTask)
+                extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
+                    resources.srcDir(generateTask)
                 }
             }
         }

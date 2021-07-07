@@ -27,16 +27,26 @@ package net.minecrell.pluginyml.bungee
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.yml") {
 
     override fun createExtension(project: Project) = BungeePluginDescription()
 
-    override fun setDefaults(project: Project, description: BungeePluginDescription) {
+    override fun createConfiguration(project: Project): Configuration {
+        val library = project.configurations.maybeCreate("library")
+        val platformLibrary = project.configurations.maybeCreate("bungeeLibrary").extendsFrom(library)
+        project.configurations.maybeCreate("compileClasspath").extendsFrom(platformLibrary)
+        return platformLibrary
+    }
+
+    override fun setDefaults(project: Project, libraries: Configuration?, description: BungeePluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.author = description.author ?: project.findProperty("author")?.toString()
+        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.resolvedArtifacts
+            .map { it.id.componentIdentifier.toString() }
     }
 
     override fun validate(description: BungeePluginDescription) {

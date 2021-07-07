@@ -27,11 +27,16 @@ package net.minecrell.pluginyml.nukkit
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.yml") {
     override fun createExtension(project: Project) = NukkitPluginDescription(project)
 
-    override fun setDefaults(project: Project, description: NukkitPluginDescription) {
+    override fun createConfiguration(project: Project): Configuration? {
+        return null
+    }
+
+    override fun setDefaults(project: Project, libraries: Configuration?, description: NukkitPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description

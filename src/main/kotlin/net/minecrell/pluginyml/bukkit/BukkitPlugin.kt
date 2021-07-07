@@ -27,6 +27,7 @@ package net.minecrell.pluginyml.bukkit
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 
 class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.yml") {
 
@@ -36,12 +37,21 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
 
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
 
-    override fun setDefaults(project: Project, description: BukkitPluginDescription) {
+    override fun createConfiguration(project: Project): Configuration {
+        val library = project.configurations.maybeCreate("library")
+        val platformLibrary = project.configurations.maybeCreate("bukkitLibrary").extendsFrom(library)
+        project.configurations.maybeCreate("compileClasspath").extendsFrom(platformLibrary)
+        return platformLibrary
+    }
+
+    override fun setDefaults(project: Project, libraries: Configuration?, description: BukkitPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.website = description.website ?: project.findProperty("url")?.toString()
         description.author = description.author ?: project.findProperty("author")?.toString()
+        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.resolvedArtifacts
+            .map { it.id.componentIdentifier.toString() }
     }
 
     override fun validate(description: BukkitPluginDescription) {

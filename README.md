@@ -27,6 +27,12 @@ plugins {
     id 'net.minecrell.plugin-yml.bukkit' version '0.4.0'
 }
 
+dependencies {
+    // Downloaded from Maven Central when the plugin is loaded
+    library 'com.google.code.gson:gson:2.8.7' // All platforms
+    bukkitLibrary 'com.google.code.gson:gson:2.8.7' // Bukkit only
+}
+
 bukkit {
     // Default values can be overridden if needed
     // name = 'TestPlugin'
@@ -83,6 +89,13 @@ bukkit {
 ```kotlin
 plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.4.0"
+}
+
+dependencies {
+    // Downloaded from Maven Central when the plugin is loaded
+    library(kotlin("stdlib")) // All platforms
+    library("com.google.code.gson", "gson", "2.8.7") // All platforms
+    bukkitLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
 }
 
 bukkit {
@@ -145,6 +158,12 @@ plugins {
     id 'net.minecrell.plugin-yml.bungee' version '0.4.0'
 }
 
+dependencies {
+    // Downloaded from Maven Central when the plugin is loaded
+    library 'com.google.code.gson:gson:2.8.7' // All platforms
+    bungeeLibrary 'com.google.code.gson:gson:2.8.7' // Bungee only
+}
+
 bungee {
     // Default values can be overridden if needed
     // name = 'TestPlugin'
@@ -168,6 +187,13 @@ bungee {
 ```kotlin
 plugins {
     id("net.minecrell.plugin-yml.bungee") version "0.4.0"
+}
+
+dependencies {
+    // Downloaded from Maven Central when the plugin is loaded
+    library(kotlin("stdlib")) // All platforms
+    library("com.google.code.gson", "gson", "2.8.7") // All platforms
+    bungeeLibrary("com.google.code.gson", "gson", "2.8.7") // Bungee only
 }
 
 bungee {

@@ -26,6 +26,7 @@ package net.minecrell.pluginyml
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.api.tasks.SourceSet
@@ -37,6 +38,11 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
     protected abstract fun createExtension(project: Project): T
 
+    protected open fun createConfiguration(project: Project): Configuration? {
+        val library = project.configurations.maybeCreate("library")
+        return project.configurations.create("${platformName.decapitalize()}Library").extendsFrom(library)
+    }
+
     final override fun apply(project: Project) {
         project.run {
             val description = createExtension(this)
@@ -46,12 +52,15 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
             val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
 
+            // Add library configuration
+            val libraries = createConfiguration(this)
+
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 fileName.set(this@PlatformPlugin.fileName)
                 outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
-                    setDefaults(project, description)
+                    setDefaults(project, libraries, description)
                     description
                 })
 
@@ -63,12 +72,15 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
                     resources.srcDir(generateTask)
+                    if (libraries != null) {
+                        configurations.getByName(compileClasspathConfigurationName).extendsFrom(libraries)
+                    }
                 }
             }
         }
     }
 
-    protected abstract fun setDefaults(project: Project, description: T)
+    protected abstract fun setDefaults(project: Project, libraries: Configuration?, description: T)
     protected abstract fun validate(description: T)
 
 }

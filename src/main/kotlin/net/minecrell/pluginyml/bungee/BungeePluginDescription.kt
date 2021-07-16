@@ -36,4 +36,5 @@ class BungeePluginDescription : PluginDescription {
     @Input @Optional var depends: Set<String>? = null
     @Input @Optional var softDepends: Set<String>? = null
     @Input @Optional var description: String? = null
+    @Input @Optional var libraries: List<String>? = null
 }

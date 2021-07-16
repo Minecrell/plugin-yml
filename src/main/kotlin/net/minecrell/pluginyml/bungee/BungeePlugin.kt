@@ -38,8 +38,8 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.author = description.author ?: project.findProperty("author")?.toString()
-        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.resolvedArtifacts
-            .map { it.id.componentIdentifier.toString() }
+        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.firstLevelModuleDependencies
+            .map { it.module.id.toString() }
     }
 
     override fun validate(description: BungeePluginDescription) {

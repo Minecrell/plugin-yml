@@ -40,7 +40,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
     protected open fun createConfiguration(project: Project): Configuration? {
         val library = project.configurations.maybeCreate("library")
-        return project.configurations.create("${platformName}Library").extendsFrom(library)
+        return project.configurations.create("${platformName.decapitalize()}Library").extendsFrom(library)
     }
 
     final override fun apply(project: Project) {

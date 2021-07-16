@@ -37,13 +37,6 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
 
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
 
-    override fun createConfiguration(project: Project): Configuration {
-        val library = project.configurations.maybeCreate("library")
-        val platformLibrary = project.configurations.maybeCreate("bukkitLibrary").extendsFrom(library)
-        project.configurations.maybeCreate("compileClasspath").extendsFrom(platformLibrary)
-        return platformLibrary
-    }
-
     override fun setDefaults(project: Project, libraries: Configuration?, description: BukkitPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()

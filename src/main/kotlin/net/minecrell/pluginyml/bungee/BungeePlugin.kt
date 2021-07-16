@@ -33,13 +33,6 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
 
     override fun createExtension(project: Project) = BungeePluginDescription()
 
-    override fun createConfiguration(project: Project): Configuration {
-        val library = project.configurations.maybeCreate("library")
-        val platformLibrary = project.configurations.maybeCreate("bungeeLibrary").extendsFrom(library)
-        project.configurations.maybeCreate("compileClasspath").extendsFrom(platformLibrary)
-        return platformLibrary
-    }
-
     override fun setDefaults(project: Project, libraries: Configuration?, description: BungeePluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()

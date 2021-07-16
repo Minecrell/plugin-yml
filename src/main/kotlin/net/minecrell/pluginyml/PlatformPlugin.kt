@@ -37,7 +37,11 @@ import org.gradle.kotlin.dsl.withType
 abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) : Plugin<Project> {
 
     protected abstract fun createExtension(project: Project): T
-    protected abstract fun createConfiguration(project: Project): Configuration?
+
+    protected open fun createConfiguration(project: Project): Configuration? {
+        val library = project.configurations.maybeCreate("library")
+        return project.configurations.create("${platformName}Library").extendsFrom(library)
+    }
 
     final override fun apply(project: Project) {
         project.run {
@@ -68,6 +72,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
                     resources.srcDir(generateTask)
+                    configurations.getByName(compileClasspathConfigurationName).extendsFrom(libraries)
                 }
             }
         }

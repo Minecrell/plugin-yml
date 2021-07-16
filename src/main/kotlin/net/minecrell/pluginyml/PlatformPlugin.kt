@@ -72,7 +72,9 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
                     resources.srcDir(generateTask)
-                    configurations.getByName(compileClasspathConfigurationName).extendsFrom(libraries)
+                    if (libraries != null) {
+                        configurations.getByName(compileClasspathConfigurationName).extendsFrom(libraries)
+                    }
                 }
             }
         }

@@ -3,7 +3,7 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.14.0"
-    id("org.cadixdev.licenser") version "0.6.0"
+    id("org.cadixdev.licenser") version "0.6.1"
 }
 
 val url: String by extra

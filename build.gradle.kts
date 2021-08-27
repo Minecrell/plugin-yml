@@ -2,7 +2,7 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.14.0"
+    id("com.gradle.plugin-publish") version "0.15.0"
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -13,10 +13,10 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3") {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.5")
 }
 
 java {

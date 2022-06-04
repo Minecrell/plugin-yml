@@ -33,11 +33,14 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
 
     override fun createExtension(project: Project) = BungeePluginDescription()
 
-    override fun setDefaults(project: Project, libraries: Configuration?, description: BungeePluginDescription) {
+    override fun setDefaults(project: Project, description: BungeePluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.author = description.author ?: project.findProperty("author")?.toString()
+    }
+
+    override fun resolve(libraries: Configuration?, description: BungeePluginDescription) {
         description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.firstLevelModuleDependencies
             .map { it.module.id.toString() }
     }

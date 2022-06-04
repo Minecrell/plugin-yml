@@ -36,12 +36,15 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
         return null
     }
 
-    override fun setDefaults(project: Project, libraries: Configuration?, description: NukkitPluginDescription) {
+    override fun setDefaults(project: Project, description: NukkitPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.website = description.website ?: project.findProperty("url")?.toString()
         description.author = description.author ?: project.findProperty("author")?.toString()
+    }
+
+    override fun resolve(libraries: Configuration?, description: NukkitPluginDescription) {
     }
 
     override fun validate(description: NukkitPluginDescription) {

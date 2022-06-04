@@ -35,10 +35,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
@@ -47,6 +49,10 @@ open class GeneratePluginDescription : DefaultTask() {
 
     @Input
     val fileName: Property<String> = project.objects.property()
+
+    @Input
+    @Optional
+    val librariesConfiguration: Property<Configuration> = project.objects.property()
 
     @Nested
     val pluginDescription: Property<PluginDescription> = project.objects.property()

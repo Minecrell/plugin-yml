@@ -37,12 +37,15 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
 
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
 
-    override fun setDefaults(project: Project, libraries: Configuration?, description: BukkitPluginDescription) {
+    override fun setDefaults(project: Project, description: BukkitPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
         description.website = description.website ?: project.findProperty("url")?.toString()
         description.author = description.author ?: project.findProperty("author")?.toString()
+    }
+
+    override fun resolve(libraries: Configuration?, description: BukkitPluginDescription) {
         description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.firstLevelModuleDependencies
             .map { it.module.id.toString() }
     }

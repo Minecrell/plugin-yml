@@ -58,13 +58,15 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 fileName.set(this@PlatformPlugin.fileName)
+                librariesConfiguration.set(libraries)
                 outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
-                    setDefaults(project, libraries, description)
+                    setDefaults(project, description)
                     description
                 })
 
                 doFirst {
+                    resolve(librariesConfiguration.orNull, description)
                     validate(description)
                 }
             }
@@ -80,7 +82,8 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
         }
     }
 
-    protected abstract fun setDefaults(project: Project, libraries: Configuration?, description: T)
+    protected abstract fun setDefaults(project: Project, description: T)
+    protected abstract fun resolve(libraries: Configuration?, description: T)
     protected abstract fun validate(description: T)
 
 }

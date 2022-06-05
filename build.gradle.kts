@@ -2,7 +2,7 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.18.0"
+    id("com.gradle.plugin-publish") version "0.21.0"
     id("org.cadixdev.licenser") version "0.6.1"
 }
 

@@ -41,8 +41,12 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
     }
 
     override fun resolve(libraries: Configuration?, description: BungeePluginDescription) {
-        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.firstLevelModuleDependencies
-            .map { it.module.id.toString() }
+        description.libraries = (
+                (description.libraries ?: listOf()) + libraries!!
+                    .resolvedConfiguration
+                    .firstLevelModuleDependencies
+                    .map { it.module.id.toString() }
+                )
     }
 
     override fun validate(description: BungeePluginDescription) {

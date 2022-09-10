@@ -46,8 +46,12 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
     }
 
     override fun resolve(libraries: Configuration?, description: BukkitPluginDescription) {
-        description.libraries = description.libraries ?: libraries!!.resolvedConfiguration.firstLevelModuleDependencies
-            .map { it.module.id.toString() }
+        description.libraries = (
+                (description.libraries ?: listOf()) + libraries!!
+                    .resolvedConfiguration
+                    .firstLevelModuleDependencies
+                    .map { it.module.id.toString() }
+                )
     }
 
     override fun validate(description: BukkitPluginDescription) {

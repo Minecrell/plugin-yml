@@ -43,22 +43,21 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.property
 
-open class GeneratePluginDescription : DefaultTask() {
+abstract class GeneratePluginDescription : DefaultTask() {
 
-    @Input
-    val fileName: Property<String> = project.objects.property()
+    @get:Input
+    abstract val fileName: Property<String>
 
-    @Input
-    @Optional
-    val librariesConfiguration: Property<Configuration> = project.objects.property()
+    @get:Input
+    @get:Optional
+    abstract val librariesConfiguration: Property<Configuration>
 
-    @Nested
-    val pluginDescription: Property<PluginDescription> = project.objects.property()
+    @get:Nested
+    abstract val pluginDescription: Property<PluginDescription>
 
-    @OutputDirectory
-    val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
 
     @TaskAction
     fun generate() {

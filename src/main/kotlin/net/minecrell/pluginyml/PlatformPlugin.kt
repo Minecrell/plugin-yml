@@ -27,6 +27,7 @@ package net.minecrell.pluginyml
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.api.tasks.SourceSet
@@ -58,7 +59,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 fileName.set(this@PlatformPlugin.fileName)
-                librariesConfiguration.set(libraries)
+                librariesRootComponent.set(libraries?.incoming?.resolutionResult?.root)
                 outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)
@@ -66,7 +67,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
                 })
 
                 doFirst {
-                    resolve(librariesConfiguration.orNull, description)
+                    setLibraries(librariesRootComponent.orNull, description)
                     validate(description)
                 }
             }
@@ -83,7 +84,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
     }
 
     protected abstract fun setDefaults(project: Project, description: T)
-    protected abstract fun resolve(libraries: Configuration?, description: T)
+    protected abstract fun setLibraries(libraries: ResolvedComponentResult?, description: T)
     protected abstract fun validate(description: T)
 
 }

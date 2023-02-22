@@ -50,7 +50,7 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         val resolved = libraries?.let {
             it.dependencies.map { d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d") }
         }
-        description.libraries = (description.libraries ?: listOf()) + (resolved ?: listOf())
+        description.libraries = ((description.libraries ?: listOf()) + (resolved ?: listOf())).distinct()
     }
 
     override fun validate(description: BukkitPluginDescription) {

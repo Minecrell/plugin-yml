@@ -5,7 +5,9 @@ are set automatically (e.g. project name, version or description) and additional
 simple DSL.
 
 ## Usage
-[plugin-yml] requires at least **Gradle 5.0**. Using the latest version of Gradle is recommended.
+[plugin-yml] requires at least **Gradle 7.4**. Using the latest version of Gradle is recommended.
+If you are using an older version of Gradle, try using an older version of plugin-yml as well.
+plugin-yml `0.5.2` still supports Gradle 5.0+.
 
 ### Default values
 

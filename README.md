@@ -24,7 +24,7 @@ simple DSL.
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bukkit' version '0.5.2'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.5.3'
 }
 
 dependencies {
@@ -88,7 +88,7 @@ bukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 dependencies {
@@ -155,7 +155,7 @@ bukkit {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bungee' version '0.5.2'
+    id 'net.minecrell.plugin-yml.bungee' version '0.5.3'
 }
 
 dependencies {
@@ -186,7 +186,7 @@ bungee {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bungee") version "0.5.2"
+    id("net.minecrell.plugin-yml.bungee") version "0.5.3"
 }
 
 dependencies {
@@ -220,7 +220,7 @@ bungee {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.nukkit' version '0.5.2'
+    id 'net.minecrell.plugin-yml.nukkit' version '0.5.3'
 }
 
 nukkit {
@@ -273,7 +273,7 @@ nukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.nukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.nukkit") version "0.5.3"
 }
 
 nukkit {

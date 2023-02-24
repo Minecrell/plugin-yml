@@ -1,8 +1,7 @@
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
-    `maven-publish`
-    id("com.gradle.plugin-publish") version "0.21.0"
+    id("com.gradle.plugin-publish") version "1.1.0"
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -13,50 +12,37 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3") {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
-}
-
-java {
-    withSourcesJar()
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 }
 
 gradlePlugin {
+    website.set(url)
+    vcsUrl.set(url)
+
     plugins {
         register("bukkit") {
             id = "net.minecrell.plugin-yml.bukkit"
             displayName = "plugin-yml (Bukkit)"
             description = "Generate plugin.yml for Bukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bukkit.BukkitPlugin"
+            tags.set(listOf("bukkit"))
         }
         register("bungee") {
             id = "net.minecrell.plugin-yml.bungee"
             displayName = "plugin-yml (BungeeCord)"
             description = "Generate bungee.yml for BungeeCord plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bungee.BungeePlugin"
+            tags.set(listOf("bungee"))
         }
         register("nukkit") {
             id = "net.minecrell.plugin-yml.nukkit"
             displayName = "plugin-yml (Nukkit)"
             description = "Generate nukkit.yml for Nukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.nukkit.NukkitPlugin"
+            tags.set(listOf("nukkit"))
         }
     }
-}
-
-publishing {
-    publications {
-        register<MavenPublication>("mavenJava") {
-            from(components["java"])
-        }
-    }
-}
-
-pluginBundle {
-    website = url
-    vcsUrl = url
-    description = project.description
-    tags = listOf("bukkit", "bungee", "nukkit")
 }

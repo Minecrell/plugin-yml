@@ -41,7 +41,8 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
     protected open fun createConfiguration(project: Project): Configuration? {
         val library = project.configurations.maybeCreate("library")
-        return project.configurations.create("${platformName.decapitalize()}Library").extendsFrom(library)
+        val prefix = platformName.replaceFirstChar(Char::lowercase)
+        return project.configurations.create("${prefix}Library").extendsFrom(library)
     }
 
     final override fun apply(project: Project) {
@@ -49,7 +50,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             val description = createExtension(this)
 
             // Add extension
-            extensions.add(platformName.decapitalize(), description)
+            extensions.add(platformName.replaceFirstChar(Char::lowercase), description)
 
             val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
 

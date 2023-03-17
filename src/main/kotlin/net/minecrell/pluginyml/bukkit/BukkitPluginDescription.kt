@@ -45,6 +45,7 @@ class BukkitPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var load: PluginLoadOrder? = null
     @Input @Optional var author: String? = null
     @Input @Optional var authors: List<String>? = null
+    @Input @Optional var contributors: List<String>? = null
     @Input @Optional var website: String? = null
     @Input @Optional var depend: List<String>? = null
     @Input @Optional @JsonProperty("softdepend") var softDepend: List<String>? = null

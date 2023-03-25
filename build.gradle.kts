@@ -44,5 +44,12 @@ gradlePlugin {
             implementationClass = "net.minecrell.pluginyml.nukkit.NukkitPlugin"
             tags.set(listOf("nukkit"))
         }
+        register("paper") {
+            id = "net.minecrell.plugin-yml.paper"
+            displayName = "plugin-yml (Paper)"
+            description = "Generate paper-plugin.yml for Paper plugins based on the Gradle project"
+            implementationClass = "net.minecrell.pluginyml.paper.PaperPlugin"
+            tags.set(listOf("paper"))
+        }
     }
 }

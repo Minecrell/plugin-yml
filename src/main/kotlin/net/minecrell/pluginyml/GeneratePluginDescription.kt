@@ -64,7 +64,6 @@ abstract class GeneratePluginDescription : DefaultTask() {
         val factory = YAMLFactory()
             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
             .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-            .enable(YAMLGenerator.Feature.INDENT_ARRAYS)
 
         val module = SimpleModule()
         @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...

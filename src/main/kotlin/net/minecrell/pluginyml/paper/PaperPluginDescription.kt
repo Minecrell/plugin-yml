@@ -53,19 +53,23 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
     @Input @Optional var libraries: List<String>? = null
+    @Nested @Optional @JsonProperty("dependencies") var depends: List<DependencyDefinition>? = null
+    @Nested @Optional @JsonProperty("load-before") var loadBefore: List<LoadDefinition>? = null
+    @Nested @Optional @JsonProperty("load-after") var loadAfter: List<LoadDefinition>? = null
 
-    @Nested @JsonProperty("dependencies") val depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
-    @Nested @JsonProperty("load-before") val loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
-    @Nested @JsonProperty("load-after") val loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
     @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
     @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
-    fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
-    fun loadAfter(closure: Closure<Unit>) = loadAfter.configure(closure)
-    fun depends(closure: Closure<Unit>) = depends.configure(closure)
+
+    fun dependency(name: String, required: Boolean = false, boostrap: Boolean = false): DependencyDefinition {
+        return DependencyDefinition(name, required, boostrap)
+    }
+    fun loader(name: String, boostrap: Boolean = false): LoadDefinition {
+        return LoadDefinition(name, boostrap)
+    }
 
     enum class PluginLoadOrder {
         STARTUP,
@@ -80,13 +84,10 @@ class PaperPluginDescription(project: Project) : PluginDescription {
         @Input @Optional var usage: String? = null
     }
 
-    data class DependencyDefinition(@Input @JsonIgnore val name: String) {
-        @Input @Optional var required: Boolean = false
-        @Input @Optional var bootstrap: Boolean = false
+    data class DependencyDefinition(@Input val name: String, @Input val required: Boolean = false, @Input val bootstrap: Boolean = false) {
     }
 
-    data class LoadDefinition(@Input @JsonIgnore val name: String) {
-        @Input @Optional var bootstrap: Boolean = true
+    data class LoadDefinition(@Input val name: String, @Input val bootstrap: Boolean = false) {
     }
 
     data class Permission(@Input @JsonIgnore val name: String) {

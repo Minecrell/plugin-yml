@@ -53,7 +53,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
     @Input @Optional var libraries: List<String>? = null
-    @Nested @Optional @JsonProperty("dependencies") var depends: List<DependencyDefinition>? = null
+    @Nested @Optional @JsonProperty("dependencies") var dependencies: List<DependencyDefinition>? = null
     @Nested @Optional @JsonProperty("load-before") var loadBefore: List<LoadDefinition>? = null
     @Nested @Optional @JsonProperty("load-after") var loadAfter: List<LoadDefinition>? = null
 

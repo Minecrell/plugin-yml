@@ -37,7 +37,7 @@ import org.gradle.api.tasks.Optional
 
 class PaperPluginDescription(project: Project) : PluginDescription {
 
-    @Input @Optional @JsonProperty("api-version") var apiVersion: String? = null
+    @Input @JsonProperty("api-version") var apiVersion: String? = null
     @Input var name: String? = null
     @Input var version: String? = null
     @Input var main: String? = null

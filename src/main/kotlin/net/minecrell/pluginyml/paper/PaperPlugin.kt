@@ -74,6 +74,18 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
             }
         }
 
+        for (before in description.loadBefore?: emptyList()) {
+            if (before.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadBefore can not be empty")
+        }
+
+        for (after in description.loadAfter?: emptyList()) {
+            if (after.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadAfter can not be empty")
+        }
+
+        for (depend in description.depends?: emptyList()) {
+            if (depend.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in depends can not be empty")
+        }
+
         if (description.provides?.all(VALID_NAME::matches) == false) {
             throw InvalidPluginDescriptionException("Invalid plugin provides name: all should match $VALID_NAME")
         }

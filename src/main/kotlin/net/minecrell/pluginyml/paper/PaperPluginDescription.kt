@@ -54,7 +54,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var provides: List<String>? = null
     @Input @Optional var libraries: List<String>? = null
 
-    @Nested @JsonProperty("dependencies") val depends: NamedDomainObjectContainer<Dependency> = project.container(Dependency::class.java)
+    @Nested @JsonProperty("dependencies") val depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
     @Nested @JsonProperty("load-before") val loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
     @Nested @JsonProperty("load-after") val loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
     @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
@@ -80,7 +80,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
         @Input @Optional var usage: String? = null
     }
 
-    data class Dependency(@Input @JsonIgnore val name: String) {
+    data class DependencyDefinition(@Input @JsonIgnore val name: String) {
         @Input @Optional var required: Boolean = false
         @Input @Optional var bootstrap: Boolean = false
     }

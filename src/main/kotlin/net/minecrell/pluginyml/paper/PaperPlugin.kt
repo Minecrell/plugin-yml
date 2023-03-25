@@ -62,6 +62,10 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
         val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
         if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
+        if (description.bootstrapper?.startsWith("org.bukkit.") == true) throw InvalidPluginDescriptionException("Bootstrapper may not be within the org.bukkit namespace")
+        if (description.bootstrapper?.startsWith(" io.papermc.paper.plugin") == true) throw InvalidPluginDescriptionException("Bootstrapper may not be within the  io.papermc.paper.plugin namespace")
+        if (description.loader?.startsWith("org.bukkit.") == true) throw InvalidPluginDescriptionException("Loader may not be within the org.bukkit namespace")
+        if (description.loader?.startsWith(" io.papermc.paper.plugin") == true) throw InvalidPluginDescriptionException("Loader may not be within the  io.papermc.paper.plugin namespace")
 
         for (command in description.commands) {
             if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")

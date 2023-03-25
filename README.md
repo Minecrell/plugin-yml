@@ -225,7 +225,7 @@ bukkit {
 
 ```kotlin
 plugins {
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("net.minecrell.plugin-yml.paper") version "0.5.3"
 }
 
 dependencies {

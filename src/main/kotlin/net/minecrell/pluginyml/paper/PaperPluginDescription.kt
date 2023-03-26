@@ -56,7 +56,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var libraries: List<String>? = null
 
     @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
-    var dependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
+    var depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
     @Nested @Optional @JsonProperty("load-before")
     @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class) var loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
     @Nested @Optional @JsonProperty("load-after") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
@@ -68,7 +68,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
-    fun dependencies(closure: Closure<Unit>) = dependencies.configure(closure)
+    fun depends(closure: Closure<Unit>) = depends.configure(closure)
     fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
     fun loadAfter(closure: Closure<Unit>) = loadAfter.configure(closure)
 

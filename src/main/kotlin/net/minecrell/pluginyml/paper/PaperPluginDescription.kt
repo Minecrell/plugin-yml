@@ -26,6 +26,7 @@ package net.minecrell.pluginyml.paper
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
 import org.gradle.api.NamedDomainObjectContainer
@@ -53,9 +54,13 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
     @Input @Optional var libraries: List<String>? = null
-    @Nested @Optional @JsonProperty("dependencies") var dependencies: List<DependencyDefinition>? = null
-    @Nested @Optional @JsonProperty("load-before") var loadBefore: List<LoadDefinition>? = null
-    @Nested @Optional @JsonProperty("load-after") var loadAfter: List<LoadDefinition>? = null
+
+    @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
+    var dependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
+    @Nested @Optional @JsonProperty("load-before")
+    @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class) var loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
+    @Nested @Optional @JsonProperty("load-after") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
+    var loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
 
     @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
     @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
@@ -63,13 +68,9 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
-
-    fun dependency(name: String, required: Boolean = false, boostrap: Boolean = false): DependencyDefinition {
-        return DependencyDefinition(name, required, boostrap)
-    }
-    fun loader(name: String, boostrap: Boolean = false): LoadDefinition {
-        return LoadDefinition(name, boostrap)
-    }
+    fun dependencies(closure: Closure<Unit>) = dependencies.configure(closure)
+    fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
+    fun loadAfter(closure: Closure<Unit>) = loadAfter.configure(closure)
 
     enum class PluginLoadOrder {
         STARTUP,
@@ -84,10 +85,13 @@ class PaperPluginDescription(project: Project) : PluginDescription {
         @Input @Optional var usage: String? = null
     }
 
-    data class DependencyDefinition(@Input val name: String, @Input val required: Boolean = false, @Input val bootstrap: Boolean = false) {
+    data class DependencyDefinition(@Input val name: String) {
+        @Input var required: Boolean = false
+        @Input var bootstrap: Boolean = false
     }
 
-    data class LoadDefinition(@Input val name: String, @Input val bootstrap: Boolean = false) {
+    data class LoadDefinition(@Input val name: String) {
+        @Input var bootstrap: Boolean = false
     }
 
     data class Permission(@Input @JsonIgnore val name: String) {

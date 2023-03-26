@@ -152,6 +152,19 @@ bukkit {
 
 ### Paper
 
+#### Importing library via paperLibrary
+
+Paperplugins do not support library loading like spigot does. 
+Instead, libraries and repositories need to be defined via a PluginLoader implementation inside your plugin.
+To give you access to repositories and dependencies marked as `paperLibrary` the plugin can create two classes called `Libraries` and `Repos`.
+To create those classes set `generateLibClass` and `generateReposClass` to true.
+Those classes are enums and provide all listed repositories and dependencies to you. 
+Build you plugin once to generate them.
+You can reference them inside the code afterwards.
+Repositories will be named via their defined names.
+If you do not define a name they will be named MAVENX where x is a number counting up.
+It is highly recommended to give your repositories a name if you want to use them.
+
 <details>
 <summary><strong>Groovy</strong></summary>
 

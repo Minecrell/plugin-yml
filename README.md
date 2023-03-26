@@ -166,7 +166,7 @@ dependencies {
     paperLibrary 'com.google.code.gson:gson:2.8.7' // Bukkit only
 }
 
-bukkit {
+paper {    
     // Default values can be overridden if needed
     // name = 'TestPlugin'
     // version = '1.0'
@@ -176,19 +176,30 @@ bukkit {
     
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
+
+    // Generate Library class
+    generateLibClass = true
+    // Generate Repos class
+    generateReposClass = true
+    // The package where Repos and Libraries class are stored
+    generatedPackageName = 'com.example.testplugin'
+
     
-    // API version (should be set for 1.13+)
-    apiVersion = '1.13'
+    // API version (Needs to be 1.19 or higher)
+    apiVersion = '1.19'
     
     // Other possible properties from plugin.yml (optional)
     load = 'STARTUP' // or 'POSTWORLD' 
     authors = ['Notch', 'Notch2']
-    depend = [
-        // Required dependency
-        dependency("WorldEdit", required : true, boostrap : true),
-        // Optional dependency
-        dependency("Essentials")
-    ]
+    depends {
+        'WorldEdit' {
+            required : true
+            bootstrap: true
+        }
+        'Essentials' {
+        }
+    }
+    
     loadBefore {
         'BrokenPlugin' {
             bootstrap: true
@@ -250,22 +261,37 @@ bukkit {
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
     
-    // API version (should be set for 1.13+)
-    apiVersion = "1.13"
+    // Generate Library class
+    generateLibClass = true
+    // Generate Repos class
+    generateReposClass = true
+    // The package where Repos and Libraries class are stored
+    generatedPackageName = "com.example.testplugin"
+
+    // API version (Needs to be 1.19 or higher)
+    apiVersion = "1.19"
     
     // Other possible properties from plugin.yml (optional)
     load = PaperPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
     authors = listOf("Notch", "Notch2")
-    depend = listOf(
+    
+    depends {
         // Required dependency
-        dependency("WorldEdit", required = true, boostrap = true),
+        register("WorldEdit") {
+            required = true
+            bootstrap = true
+        }
         // Optional dependency
-        dependency("Essentials"))
+        register("Essentials") {
+        }
+    }
+    
     loadBefore {
         register("BrokenPlugin") {
             bootstrap = true
         }
     }
+    
     prefix = "TEST"
     defaultPermission = PaperPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
     provides = listOf("TestPluginOldName", "TestPlug")

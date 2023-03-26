@@ -24,6 +24,7 @@
 
 package net.minecrell.pluginyml
 
+import net.minecrell.pluginyml.paper.PaperPluginDescription
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -32,8 +33,10 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.register
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 
 abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) : Plugin<Project> {
 
@@ -52,17 +55,25 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             // Add extension
             extensions.add(platformName.replaceFirstChar(Char::lowercase), description)
 
-            val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
+            val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName/resources")
+            val generatedSourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName/sources")
 
             // Add library configuration
             val libraries = createConfiguration(this)
 
             // Create task
-            val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
+            val task = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 group = "PluginYML"
+                if (description is PaperPluginDescription) {
+                    generateReposClass.set(description.generateReposClass)
+                    generateLibsClass.set(description.generateLibClass)
+                    packageName.set(description.generatedPackageName)
+                }
+
                 fileName.set(this@PlatformPlugin.fileName)
                 librariesRootComponent.set(libraries?.incoming?.resolutionResult?.root)
-                outputDirectory.set(generatedResourcesDirectory)
+                outputResourcesDirectory.set(generatedResourcesDirectory)
+                outputSourceDirectory.set(generatedSourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)
                     description
@@ -73,15 +84,22 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
                     validate(description)
                 }
             }
-
+            tasks.withType(JavaCompile::class.java) {
+                dependsOn(task)
+            }
+            tasks.withType(ProcessResources::class.java) {
+                dependsOn(task)
+            }
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
-                    resources.srcDir(generateTask)
+                    resources.srcDir(generatedResourcesDirectory)
+                    java.srcDir(generatedSourcesDirectory)
                     if (libraries != null) {
                         configurations.getByName(compileOnlyConfigurationName).extendsFrom(libraries)
                     }
                 }
             }
+
         }
     }
 

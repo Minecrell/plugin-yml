@@ -46,6 +46,7 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
         description.author = description.author ?: project.findProperty("author")?.toString()
     }
 
+
     override fun setLibraries(libraries: ResolvedComponentResult?, description: PaperPluginDescription) {
         val resolved = libraries?.let {
             it.dependencies.map { d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d") }

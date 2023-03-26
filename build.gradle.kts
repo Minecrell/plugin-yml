@@ -16,6 +16,9 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
+    implementation("com.squareup:javapoet:1.13.0")
+    implementation("org.apache.maven.resolver:maven-resolver-api:1.9.7")
+
 }
 
 gradlePlugin {

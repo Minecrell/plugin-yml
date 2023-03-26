@@ -99,12 +99,10 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
                     }
                 }
             }
-
         }
     }
 
     protected abstract fun setDefaults(project: Project, description: T)
     protected abstract fun setLibraries(libraries: ResolvedComponentResult?, description: T)
     protected abstract fun validate(description: T)
-
 }

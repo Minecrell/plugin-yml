@@ -58,6 +58,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
 
     @get:Input
     abstract val fileName: Property<String>
+
     @get:Input
     abstract val packageName: Property<String>
 
@@ -183,7 +184,6 @@ abstract class GeneratePluginDescription : DefaultTask() {
                     .build()
                     .writeTo(outputSourceDirectory.get().asFile)
             }
-
         }
     }
 
@@ -193,5 +193,4 @@ abstract class GeneratePluginDescription : DefaultTask() {
             return value.associateBy { namer.determineName(it) }
         }
     }
-
 }

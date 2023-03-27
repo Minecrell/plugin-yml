@@ -159,11 +159,24 @@ Instead, libraries and repositories need to be defined via a PluginLoader implem
 To give you access to repositories and dependencies marked as `paperLibrary` the plugin can create two classes called `Libraries` and `Repos`.
 To create those classes set `generateLibClass` and `generateReposClass` to true.
 Those classes are enums and provide all listed repositories and dependencies to you. 
-Build you plugin once to generate them.
+Build your plugin once to generate them.
 You can reference them inside the code afterwards.
 Repositories will be named via their defined names.
 If you do not define a name they will be named MAVENX where x is a number counting up.
-It is highly recommended to give your repositories a name if you want to use them.
+It is highly recommended to give your repositories a name if you want to use them directly.
+
+An example `Loader` implementation could look like this:
+```java
+public class Loader implements PluginLoader {
+    @Override
+    public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
+        MavenLibraryResolver resolver = new MavenLibraryResolver();
+        for (Libraries lib : Libraries.values()) resolver.addDependency(lib.asDependency());
+        for (Repos repo : Repos.values()) resolver.addRepository(repo.asRepo());
+        classpathBuilder.addLibrary(resolver);
+    }
+}
+```
 
 <details>
 <summary><strong>Groovy</strong></summary>
@@ -260,7 +273,7 @@ dependencies {
     // Downloaded from Maven Central when the plugin is loaded
     library(kotlin("stdlib")) // All platforms
     library("com.google.code.gson", "gson", "2.8.7") // All platforms
-    bukkitLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
+    paperLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
 }
 
 bukkit {

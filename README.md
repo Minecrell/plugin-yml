@@ -46,6 +46,9 @@ bukkit {
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
     
+    // Mark plugin for supporting Folia
+    foliaSupported = true
+    
     // API version (should be set for 1.13+)
     apiVersion = '1.13'
     
@@ -110,6 +113,10 @@ bukkit {
     
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
+    
+    // Mark plugin for supporting Folia
+    foliaSupported = true
+
     
     // API version (should be set for 1.13+)
     apiVersion = "1.13"

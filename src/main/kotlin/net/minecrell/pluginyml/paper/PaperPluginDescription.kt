@@ -42,9 +42,9 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input var name: String? = null
     @Input var version: String? = null
     @Input var main: String? = null
-    @Input var generateLibClass: Boolean = false
-    @Input var generateReposClass: Boolean = false
-    @Input var generatedPackageName: String? = null
+    @Input @JsonIgnore var generateLibClass: Boolean = false
+    @Input @JsonIgnore var generateReposClass: Boolean = false
+    @Input @Optional @JsonIgnore var generatedPackageName: String? = "net.minecrell.pluginyml"
     @Input @Optional var bootstrapper: String? = null
     @Input @Optional var loader: String? = null
     @Input @Optional var description: String? = null
@@ -58,6 +58,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var provides: List<String>? = null
     @Input @Optional @JsonIgnore var libraries: List<String>? = null
     @Input @Optional @JsonProperty("has-open-classloader") var hasOpenClassloader: Boolean? = null
+    @Input @Optional @JsonProperty("folia-supported") var foliaSupported: Boolean? = null
 
     @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
     var depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)

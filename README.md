@@ -1,8 +1,8 @@
 # plugin-yml
-[plugin-yml] is a simple Gradle plugin that generates the `plugin.yml` plugin description file for Bukkit plugins,
-`bungee.yml` for Bungee plugins or `nukkit.yml` for Nukkit plugins based on the Gradle project. Various properties
-are set automatically (e.g. project name, version or description) and additional properties can be added using a
-simple DSL.
+[plugin-yml] is a simple Gradle plugin that generates the `plugin.yml` plugin description file for Bukkit plugins, 
+`paper-plugin.yml` for Paper plugins, `bungee.yml` for Bungee plugins or `nukkit.yml` for Nukkit plugins based on
+the Gradle project. Various properties are set automatically (e.g. project name, version or description) and
+additional properties can be added using a simple DSL.
 
 ## Usage
 [plugin-yml] requires at least **Gradle 7.4**. Using the latest version of Gradle is recommended.
@@ -160,12 +160,12 @@ To give you access to repositories and dependencies marked as `paperLibrary` the
 To create those classes set `generateLibClass` and `generateReposClass` to true.
 Those classes are enums and provide all listed repositories and dependencies to you. 
 Build your plugin once to generate them.
-You can reference them inside the code afterwards.
+You can reference them inside the code afterward.
 Repositories will be named via their defined names.
-If you do not define a name they will be named MAVENX where x is a number counting up.
+If you do not define a name they will be named `MAVENX` where x is a number counting up.
 It is highly recommended to give your repositories a name if you want to use them directly.
 
-An example `Loader` implementation could look like this:
+An example `PluginLoader` implementation could look like this:
 ```java
 public class Loader implements PluginLoader {
     @Override
@@ -210,7 +210,9 @@ paper {
     // The package where Repos and Libraries class are stored
     generatedPackageName = 'com.example.testplugin'
 
-    
+    // Mark plugin for supporting Folia
+    foliaSupported = true
+
     // API version (Needs to be 1.19 or higher)
     apiVersion = '1.19'
     
@@ -293,6 +295,9 @@ bukkit {
     generateReposClass = true
     // The package where Repos and Libraries class are stored
     generatedPackageName = "com.example.testplugin"
+    
+    // Mark plugin for supporting Folia
+    foliaSupported = true
 
     // API version (Needs to be 1.19 or higher)
     apiVersion = "1.19"

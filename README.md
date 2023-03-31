@@ -52,6 +52,7 @@ bukkit {
     // Other possible properties from plugin.yml (optional)
     load = 'STARTUP' // or 'POSTWORLD' 
     authors = ['Notch', 'Notch2']
+    contributors = ['Notch3', 'Notch4']
     depend = ['WorldEdit']
     softDepend = ['Essentials']
     loadBefore = ['BrokenPlugin']
@@ -117,6 +118,7 @@ bukkit {
     // Other possible properties from plugin.yml (optional)
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
     authors = listOf("Notch", "Notch2")
+    contributors = listOf("Notch3", "Notch4")
     depend = listOf("WorldEdit")
     softDepend = listOf("Essentials")
     loadBefore = listOf("BrokenPlugin")

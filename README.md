@@ -156,14 +156,9 @@ bukkit {
 
 Paperplugins do not support library loading like spigot does. 
 Instead, libraries and repositories need to be defined via a PluginLoader implementation inside your plugin.
-To give you access to repositories and dependencies marked as `paperLibrary` the plugin can create two classes called `Libraries` and `Repos`.
-To create those classes set `generateLibClass` and `generateReposClass` to true.
-Those classes are enums and provide all listed repositories and dependencies to you. 
-Build your plugin once to generate them.
-You can reference them inside the code afterward.
-Repositories will be named via their defined names.
-If you do not define a name they will be named `MAVENX` where x is a number counting up.
-It is highly recommended to give your repositories a name if you want to use them directly.
+To give you access to repositories and dependencies marked as `paperLibrary` creates a file called `plugin-libraries.json`.
+To generate this file you need to set `generatePluginLibraries` to `true`
+You can load them as a resource afterward.
 
 An example `PluginLoader` implementation could look like this:
 ```java
@@ -171,9 +166,33 @@ public class Loader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
         MavenLibraryResolver resolver = new MavenLibraryResolver();
-        for (Libraries lib : Libraries.values()) resolver.addDependency(lib.asDependency());
-        for (Repos repo : Repos.values()) resolver.addRepository(repo.asRepo());
+        PluginLibraries pluginLibraries = load();
+        pluginLibraries.asDependencies().forEach(resolver::addDependency);
+        pluginLibraries.asRepositories().forEach(resolver::addRepository);
         classpathBuilder.addLibrary(resolver);
+    }
+
+    public PluginLibraries load() {
+        try (var in = getClass().getResourceAsStream("/plugin-libraries.json")) {
+            return new Gson().fromJson(new String(in.readAllBytes()), PluginLibraries.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private record PluginLibraries(List<String> repositories, List<String> dependencies) {
+        public List<Dependency> asDependencies() {
+            return dependencies.stream()
+                    .map(d -> new Dependency(new DefaultArtifact(d), null))
+                    .toList();
+        }
+
+        public List<RemoteRepository> asRepositories() {
+            AtomicInteger integer = new AtomicInteger();
+            return repositories.stream()
+                    .map(d -> new RemoteRepository.Builder("maven" + integer.getAndIncrement(), "default", d).build())
+                    .toList();
+        }
     }
 }
 ```
@@ -203,12 +222,8 @@ paper {
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
 
-    // Generate Library class
-    generateLibClass = true
-    // Generate Repos class
-    generateReposClass = true
-    // The package where Repos and Libraries class are stored
-    generatedPackageName = 'com.example.testplugin'
+    // generate plugin-libraries.json
+    generatePluginLibraries = true
 
     // Mark plugin for supporting Folia
     foliaSupported = true
@@ -289,12 +304,8 @@ bukkit {
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
     
-    // Generate Library class
-    generateLibClass = true
-    // Generate Repos class
-    generateReposClass = true
-    // The package where Repos and Libraries class are stored
-    generatedPackageName = "com.example.testplugin"
+    // generate plugin-libraries.json
+    generatePluginLibraries = true
     
     // Mark plugin for supporting Folia
     foliaSupported = true

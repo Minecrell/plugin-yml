@@ -33,14 +33,7 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.TypeSpec
 import net.minecrell.pluginyml.paper.PaperPluginDescription
-import org.eclipse.aether.artifact.DefaultArtifact
-import org.eclipse.aether.graph.Dependency
-import org.eclipse.aether.repository.RemoteRepository
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -61,15 +54,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
 
     @get:Input
     @get:Optional
-    abstract val packageName: Property<String>
-
-    @get:Input
-    @get:Optional
-    abstract val generateLibsClass: Property<Boolean>
-
-    @get:Input
-    @get:Optional
-    abstract val generateReposClass: Property<Boolean>
+    abstract val generatePluginLibraries: Property<Boolean>
 
     @get:Input
     @get:Optional
@@ -80,9 +65,6 @@ abstract class GeneratePluginDescription : DefaultTask() {
 
     @get:OutputDirectory
     abstract val outputResourcesDirectory: DirectoryProperty
-
-    @get:OutputDirectory
-    abstract val outputSourceDirectory: DirectoryProperty
 
     @TaskAction
     fun generate() {
@@ -106,87 +88,20 @@ abstract class GeneratePluginDescription : DefaultTask() {
         val pluginDescription = pluginDescription.get()
 
         mapper.writeValue(outputResourcesDirectory.file(fileName).get().asFile, pluginDescription)
-        if (generateLibsClass.isPresent) buildDependencies(pluginDescription)
-        if (generateReposClass.isPresent) buildRepos(pluginDescription)
+        if (generatePluginLibraries.isPresent) buildPluginLibraries(pluginDescription)
     }
 
-    private fun buildRepos(pluginDescription: PluginDescription) {
+    private fun buildPluginLibraries(pluginDescription: PluginDescription) {
         if (pluginDescription is PaperPluginDescription) {
-            var typeSpec = TypeSpec.enumBuilder("Repos")
-            typeSpec.addModifiers(Modifier.PUBLIC)
-            val remoteRepositoryClass = ClassName.get(RemoteRepository::class.java)
-            this.project.repositories.filterIsInstance<MavenArtifactRepository>().forEach {
-                typeSpec = typeSpec.addEnumConstant(
-                    it.name.uppercase().replace('-', '_'),
-                    TypeSpec.anonymousClassBuilder(
-                        "new \$T.Builder(\$S,\"default\",\$S).build()",
-                        *arrayOf(remoteRepositoryClass, it.name, it.url.toString())
-                    ).build()
-                )
-            }
-            typeSpec.addField(RemoteRepository::class.java, "value", Modifier.PRIVATE, Modifier.FINAL)
-            typeSpec.addMethod(
-                MethodSpec.constructorBuilder()
-                    .addParameter(RemoteRepository::class.java, "value")
-                    .addStatement("this.\$N = \$N", "value", "value")
-                    .build()
-            )
-            typeSpec.addMethod(
-                MethodSpec.methodBuilder("asRepo")
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(RemoteRepository::class.java)
-                    .addStatement("return this.value")
-                    .build()
-            )
-            JavaFile.builder(packageName.getOrElse("net.minecrell.pluginyml"), typeSpec.build())
-                .build()
-                .writeTo(outputSourceDirectory.get().asFile)
-        }
-    }
+            val repos = this.project.repositories.filterIsInstance<MavenArtifactRepository>().map { it.url.toString() }.toList()
+            val dependencies = pluginDescription.libraries!!.toList()
+            val pluginLibraries = PluginLibraries(repos, dependencies)
 
-    private fun buildDependencies(pluginDescription: PluginDescription) {
-        if (pluginDescription is PaperPluginDescription && pluginDescription.libraries != null) {
-            pluginDescription.libraries!!.toList().let { libs ->
-                if (libs.isEmpty()) return@let
-                var typeSpec = TypeSpec.enumBuilder("Libraries")
-                typeSpec.addModifiers(Modifier.PUBLIC)
-                val clazz = ClassName.get(DefaultArtifact::class.java)
-                val dependencyClass = ClassName.get(Dependency::class.java)
-                libs.forEach { it ->
-                    if (it.count { it == ':' } != 2) throw IllegalArgumentException("Invalid library: $it")
-                    val group = it.substringBefore(':')
-                    val version = it.substringAfterLast(':')
-                    val name = it.substringAfter(':').substringBefore(':')
-                    typeSpec = typeSpec.addEnumConstant(
-                        name.uppercase().replace('-', '_'),
-                        TypeSpec.anonymousClassBuilder("new \$T(\$S)", *arrayOf(clazz, "$group:$name:$version")).build()
-                    )
-                }
-                typeSpec.addField(DefaultArtifact::class.java, "value", Modifier.PRIVATE, Modifier.FINAL)
-                typeSpec.addMethod(
-                    MethodSpec.constructorBuilder()
-                        .addParameter(DefaultArtifact::class.java, "value")
-                        .addStatement("this.\$N = \$N", "value", "value")
-                        .build()
-                )
-                typeSpec.addMethod(
-                    MethodSpec.methodBuilder("asDependency")
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(Dependency::class.java)
-                        .addStatement("return new \$T(this.value, null)", dependencyClass)
-                        .build()
-                )
-                typeSpec.addMethod(
-                    MethodSpec.methodBuilder("asArtifact")
-                        .addModifiers(Modifier.PUBLIC)
-                        .returns(DefaultArtifact::class.java)
-                        .addStatement("return this.value")
-                        .build()
-                )
-                JavaFile.builder(packageName.getOrElse("net.minecrell.pluginyml"), typeSpec.build())
-                    .build()
-                    .writeTo(outputSourceDirectory.get().asFile)
-            }
+            val mapper = ObjectMapper()
+                .registerKotlinModule()
+                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+            mapper.writeValue(outputResourcesDirectory.file("plugin-libraries.json").get().asFile, pluginLibraries)
         }
     }
 
@@ -196,4 +111,6 @@ abstract class GeneratePluginDescription : DefaultTask() {
             return value.associateBy { namer.determineName(it) }
         }
     }
+
+    data class PluginLibraries(val repositories: List<String>, val dependencies: List<String>)
 }

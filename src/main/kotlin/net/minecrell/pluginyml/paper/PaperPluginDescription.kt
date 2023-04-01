@@ -42,9 +42,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input var name: String? = null
     @Input var version: String? = null
     @Input var main: String? = null
-    @Input @JsonIgnore var generateLibClass: Boolean = false
-    @Input @JsonIgnore var generateReposClass: Boolean = false
-    @Input @Optional @JsonIgnore var generatedPackageName: String? = "net.minecrell.pluginyml"
+    @Input @JsonIgnore var generatePluginLibraries: Boolean = false
     @Input @Optional var bootstrapper: String? = null
     @Input @Optional var loader: String? = null
     @Input @Optional var description: String? = null

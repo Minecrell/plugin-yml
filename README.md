@@ -293,7 +293,7 @@ dependencies {
     paperLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
 }
 
-bukkit {
+paper {
     // Default values can be overridden if needed
     // name = "TestPlugin"
     // version = "1.0"

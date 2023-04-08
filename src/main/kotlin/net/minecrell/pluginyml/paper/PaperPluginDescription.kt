@@ -52,7 +52,7 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var contributors: List<String>? = null
     @Input @Optional var website: String? = null
     @Input @Optional var prefix: String? = null
-    @Input @Optional @JsonProperty("default-permission") var defaultPermission: Permission.Default? = null
+    @Input @Optional @JsonProperty("defaultPerm") var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
     @Input @Optional @JsonIgnore var libraries: List<String>? = null
     @Input @Optional @JsonProperty("has-open-classloader") var hasOpenClassloader: Boolean? = null

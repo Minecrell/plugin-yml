@@ -33,7 +33,11 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugin.yml") {
 
     companion object {
-        @JvmStatic private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+        @JvmStatic
+        private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+        @JvmStatic
+        private val INVALID_NAMESPACES = listOf("net.minecraft.", "org.bukkit.", "io.papermc.paper.", "com.destroystokoyo.paper.")
+
     }
 
     override fun createExtension(project: Project) = PaperPluginDescription(project)
@@ -49,7 +53,10 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
 
     override fun setLibraries(libraries: ResolvedComponentResult?, description: PaperPluginDescription) {
         val resolved = libraries?.let {
-            it.dependencies.map { d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d") }
+            it.dependencies.map { d ->
+                (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString()
+                        ?: error("No moduleVersion for $d")
+            }
         }
         description.libraries = ((description.libraries ?: listOf()) + (resolved ?: listOf())).distinct()
     }
@@ -66,18 +73,9 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
 
         val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
-        if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
-        if (description.bootstrapper?.startsWith("org.bukkit.") == true) throw InvalidPluginDescriptionException("Bootstrapper may not be within the org.bukkit namespace")
-        if (description.bootstrapper?.startsWith("io.papermc.paper.plugin.") == true) throw InvalidPluginDescriptionException("Bootstrapper may not be within the io.papermc.paper.plugin namespace")
-        if (description.loader?.startsWith("org.bukkit.") == true) throw InvalidPluginDescriptionException("Loader may not be within the org.bukkit namespace")
-        if (description.loader?.startsWith("io.papermc.paper.plugin.") == true) throw InvalidPluginDescriptionException("Loader may not be within the io.papermc.paper.plugin namespace")
-
-        for (command in description.commands) {
-            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
-            command.aliases?.forEach { alias ->
-                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
-            }
-        }
+        validateNamespace(description.main, "Main")
+        validateNamespace(description.bootstrapper, "Bootstrapper")
+        validateNamespace(description.loader, "Loader")
 
         for (before in description.loadBefore) {
             if (before.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadBefore can not be empty")
@@ -93,6 +91,14 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
 
         if (description.provides?.all(VALID_NAME::matches) == false) {
             throw InvalidPluginDescriptionException("Invalid plugin provides name: all should match $VALID_NAME")
+        }
+    }
+
+    private fun validateNamespace(namespace: String?, name: String) {
+        for (invalidNamespace in INVALID_NAMESPACES) {
+            if (namespace?.startsWith(invalidNamespace) == true) {
+                throw InvalidPluginDescriptionException("$name may not be within the $invalidNamespace namespace")
+            }
         }
     }
 }

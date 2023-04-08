@@ -65,11 +65,9 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Nested @Optional @JsonProperty("load-after") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
     var loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
 
-    @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
     @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
     // For Groovy DSL
-    fun commands(closure: Closure<Unit>) = commands.configure(closure)
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
     fun depends(closure: Closure<Unit>) = depends.configure(closure)
     fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
@@ -78,13 +76,6 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     enum class PluginLoadOrder {
         STARTUP,
         POSTWORLD
-    }
-    data class Command(@Input @JsonIgnore val name: String) {
-        @Input @Optional var description: String? = null
-        @Input @Optional var aliases: List<String>? = null
-        @Input @Optional var permission: String? = null
-        @Input @Optional @JsonProperty("permission-message") var permissionMessage: String? = null
-        @Input @Optional var usage: String? = null
     }
 
     data class DependencyDefinition(@Input val name: String) {

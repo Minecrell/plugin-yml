@@ -42,18 +42,18 @@ bukkit {
     // description = 'This is a test plugin'
     // website = 'https://example.com'
     // author = 'Notch'
-    
+
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
-    
+
     // Mark plugin for supporting Folia
     foliaSupported = true
-    
+
     // API version (should be set for 1.13+)
     apiVersion = '1.13'
-    
+
     // Other possible properties from plugin.yml (optional)
-    load = 'STARTUP' // or 'POSTWORLD' 
+    load = 'STARTUP' // or 'POSTWORLD'
     authors = ['Notch', 'Notch2']
     contributors = ['Notch3', 'Notch4']
     depend = ['WorldEdit']
@@ -62,18 +62,18 @@ bukkit {
     prefix = 'TEST'
     defaultPermission = 'OP' // 'TRUE', 'FALSE', 'OP' or 'NOT_OP'
     provides = ['TestPluginOldName', 'TestPlug']
-    
+
     commands {
         test {
             description = 'This is a test command!'
             aliases = ['t']
             permission = 'testplugin.test'
             usage = 'Just run the command!'
-            // permissionMessage = 'You may not test this command!' 
+            // permissionMessage = 'You may not test this command!'
         }
         // ...
     }
-    
+
     permissions {
         'testplugin.*' {
             children = ['testplugin.test'] // Defaults permissions to true
@@ -111,19 +111,18 @@ bukkit {
     // description = "This is a test plugin"
     // website = "https://example.com"
     // author = "Notch"
-    
+
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
-    
+
     // Mark plugin for supporting Folia
     foliaSupported = true
 
-    
     // API version (should be set for 1.13+)
     apiVersion = "1.13"
-    
+
     // Other possible properties from plugin.yml (optional)
-    load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD
     authors = listOf("Notch", "Notch2")
     contributors = listOf("Notch3", "Notch4")
     depend = listOf("WorldEdit")
@@ -132,18 +131,18 @@ bukkit {
     prefix = "TEST"
     defaultPermission = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
     provides = listOf("TestPluginOldName", "TestPlug")
-    
+
     commands {
         register("test") {
             description = "This is a test command!"
             aliases = listOf("t")
             permission = "testplugin.test"
             usage = "Just run the command!"
-            // permissionMessage = "You may not test this command!" 
+            // permissionMessage = "You may not test this command!"
         }
         // ...
     }
-    
+
     permissions {
         register("testplugin.*") {
             children = listOf("testplugin.test") // Defaults permissions to true
@@ -180,10 +179,10 @@ bungee {
     // name = 'TestPlugin'
     // version = '1.0'
     // description = 'This is a test plugin'
-    
+
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
-    
+
     // Other possible properties from bungee.yml
     author = 'Notch'
     depends = ['Yamler']
@@ -212,10 +211,10 @@ bungee {
     // name = "TestPlugin"
     // version = "1.0"
     // description = "This is a test plugin"
-    
+
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
-    
+
     // Other possible properties from bungee.yml
     author = "Notch"
     depends = setOf("Yamler")
@@ -241,19 +240,19 @@ nukkit {
     // description = 'This is a test plugin'
     // website = 'https://example.com'
     // author = 'Notch'
-    
+
     // Plugin main class and api (required)
     main = 'com.example.testplugin.TestPlugin'
     api = ['1.0.0']
-    
+
     // Other possible properties from nukkit.yml (optional)
-    load = 'STARTUP' // or 'POSTWORLD' 
+    load = 'STARTUP' // or 'POSTWORLD'
     authors = ['Notch', 'Notch2']
     depend = ['PlotSquared']
     softDepend = ['LuckPerms']
     loadBefore = ['BrokenPlugin']
     prefix = 'TEST'
-    
+
     commands {
         test {
             description = 'This is a test command!'
@@ -263,7 +262,7 @@ nukkit {
         }
         // ...
     }
-    
+
     permissions {
         'testplugin.*' {
             description = 'Allows you to run all testplugin commands'
@@ -294,19 +293,19 @@ nukkit {
     // description = "This is a test plugin"
     // website = "https://example.com"
     // author = "Notch"
-    
+
     // Plugin main class and api (required)
     main = "com.example.testplugin.TestPlugin"
     api = listOf("1.0.0")
-    
+
     // Other possible properties from nukkit.yml (optional)
-    load = NukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
+    load = NukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD
     authors = listOf("Notch", "Notch2")
     depend = listOf("PlotSquared")
     softDepend = listOf("LuckPerms")
     loadBefore = listOf("BrokenPlugin")
     prefix = "TEST"
-    
+
     commands {
         register("test") {
             description = "This is a test command!"
@@ -316,7 +315,7 @@ nukkit {
         }
         // ...
     }
-    
+
     permissions {
         register("testplugin.*") {
             description = "Allows you to run all testplugin commands"
@@ -324,7 +323,7 @@ nukkit {
                 register("testplugin.test") {
                     description = "Allows you to run the test command"
                     default = NukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
-                }            
+                }
             }
         }
     }

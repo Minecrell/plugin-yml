@@ -58,11 +58,11 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     @Input @Optional @JsonProperty("has-open-classloader") var hasOpenClassloader: Boolean? = null
     @Input @Optional @JsonProperty("folia-supported") var foliaSupported: Boolean? = null
 
-    @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
+    @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(`as` = Collection::class)
     var depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
-    @Nested @Optional @JsonProperty("load-before")
-    @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class) var loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
-    @Nested @Optional @JsonProperty("load-after") @JsonSerialize(converter = PaperNamedDomainObjectCollectionConverter::class)
+    @Nested @Optional @JsonProperty("load-before") @JsonSerialize(`as` = Collection::class)
+    var loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
+    @Nested @Optional @JsonProperty("load-after") @JsonSerialize(`as` = Collection::class)
     var loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
 
     @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)

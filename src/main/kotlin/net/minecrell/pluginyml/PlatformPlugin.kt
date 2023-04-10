@@ -53,7 +53,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             // Add extension
             extensions.add(platformName.replaceFirstChar(Char::lowercase), description)
 
-            val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName/resources")
+            val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
 
             // Add library configuration
             val libraries = createConfiguration(this)
@@ -67,7 +67,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
                 fileName.set(this@PlatformPlugin.fileName)
                 librariesRootComponent.set(libraries?.incoming?.resolutionResult?.root)
-                outputResourcesDirectory.set(generatedResourcesDirectory)
+                outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)
                     description
@@ -78,6 +78,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
                     validate(description)
                 }
             }
+
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
                     resources.srcDir(generateTask)
@@ -92,4 +93,5 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
     protected abstract fun setDefaults(project: Project, description: T)
     protected abstract fun setLibraries(libraries: ResolvedComponentResult?, description: T)
     protected abstract fun validate(description: T)
+
 }

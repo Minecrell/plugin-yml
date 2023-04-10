@@ -45,7 +45,6 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import javax.lang.model.element.Modifier
 
 abstract class GeneratePluginDescription : DefaultTask() {
 
@@ -64,7 +63,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
     abstract val pluginDescription: Property<PluginDescription>
 
     @get:OutputDirectory
-    abstract val outputResourcesDirectory: DirectoryProperty
+    abstract val outputDirectory: DirectoryProperty
 
     @TaskAction
     fun generate() {
@@ -74,12 +73,8 @@ abstract class GeneratePluginDescription : DefaultTask() {
 
         val module = SimpleModule()
         @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...
-        module.addSerializer(
-            StdDelegatingSerializer(
-                NamedDomainObjectCollection::class.java,
-                NamedDomainObjectCollectionConverter as Converter<NamedDomainObjectCollection<*>, *>
-            )
-        )
+        module.addSerializer(StdDelegatingSerializer(NamedDomainObjectCollection::class.java,
+            NamedDomainObjectCollectionConverter as Converter<NamedDomainObjectCollection<*>, *>))
 
         val mapper = ObjectMapper(factory)
             .registerKotlinModule()
@@ -87,7 +82,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         val pluginDescription = pluginDescription.get()
 
-        mapper.writeValue(outputResourcesDirectory.file(fileName).get().asFile, pluginDescription)
+        mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription)
         if (generatePluginLibraries.isPresent) buildPluginLibraries(pluginDescription)
     }
 
@@ -101,7 +96,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
                 .registerKotlinModule()
                 .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
-            mapper.writeValue(outputResourcesDirectory.file("plugin-libraries.json").get().asFile, pluginLibraries)
+            mapper.writeValue(outputDirectory.file("plugin-libraries.json").get().asFile, pluginLibraries)
         }
     }
 

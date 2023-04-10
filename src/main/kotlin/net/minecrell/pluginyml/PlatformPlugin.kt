@@ -60,7 +60,7 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
-                group = "PluginYML"
+                group = "plugin-yml"
                 if (description is PaperPluginDescription) {
                     generatePluginLibraries.set(description.generatePluginLibraries)
                 }

@@ -29,10 +29,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
@@ -73,11 +74,6 @@ class PaperPluginDescription(project: Project) : PluginDescription {
     fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
     fun loadAfter(closure: Closure<Unit>) = loadAfter.configure(closure)
 
-    enum class PluginLoadOrder {
-        STARTUP,
-        POSTWORLD
-    }
-
     data class DependencyDefinition(@Input val name: String) {
         @Input var required: Boolean = false
         @Input var bootstrap: Boolean = false
@@ -87,21 +83,4 @@ class PaperPluginDescription(project: Project) : PluginDescription {
         @Input var bootstrap: Boolean = false
     }
 
-    data class Permission(@Input @JsonIgnore val name: String) {
-        @Input @Optional var description: String? = null
-        @Input @Optional var default: Default? = null
-        var children: List<String>?
-            @Internal @JsonIgnore get() = childrenMap?.filterValues { it }?.keys?.toList()
-            set(value) {
-                childrenMap = value?.associateWith { true }
-            }
-        @Input @Optional @JsonProperty("children") var childrenMap: Map<String, Boolean>? = null
-
-        enum class Default {
-            @JsonProperty("true")   TRUE,
-            @JsonProperty("false")  FALSE,
-            @JsonProperty("op")     OP,
-            @JsonProperty("!op")    NOT_OP
-        }
-    }
 }

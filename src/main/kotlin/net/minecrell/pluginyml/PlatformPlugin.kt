@@ -24,10 +24,8 @@
 
 package net.minecrell.pluginyml
 
-import net.minecrell.pluginyml.paper.PaperPluginDescription
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.register
@@ -40,33 +38,27 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
 
     protected abstract fun createExtension(project: Project): T
 
-    protected open fun createConfiguration(project: Project): Configuration? {
-        val library = project.configurations.maybeCreate("library")
-        val prefix = platformName.replaceFirstChar(Char::lowercase)
-        return project.configurations.create("${prefix}Library").extendsFrom(library)
-    }
-
     final override fun apply(project: Project) {
         project.run {
             val description = createExtension(this)
 
             // Add extension
-            extensions.add(platformName.replaceFirstChar(Char::lowercase), description)
+            val prefix = platformName.replaceFirstChar(Char::lowercase)
+            extensions.add(prefix, description)
 
             val generatedResourcesDirectory = layout.buildDirectory.dir("generated/plugin-yml/$platformName")
 
             // Add library configuration
-            val libraries = createConfiguration(this)
+            val library = project.configurations.maybeCreate("library")
+            val libraries = project.configurations.create("${prefix}Library").extendsFrom(library)
 
             // Create task
             val generateTask = tasks.register<GeneratePluginDescription>("generate${platformName}PluginDescription") {
                 group = "plugin-yml"
-                if (description is PaperPluginDescription) {
-                    generatePluginLibraries.set(description.generatePluginLibraries)
-                }
 
                 fileName.set(this@PlatformPlugin.fileName)
-                librariesRootComponent.set(libraries?.incoming?.resolutionResult?.root)
+                librariesJsonFileName.set("$prefix-libraries.json")
+                librariesRootComponent.set(libraries.incoming.resolutionResult.root)
                 outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)
@@ -82,16 +74,14 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
             plugins.withType<JavaPlugin> {
                 extensions.getByType<SourceSetContainer>().named(SourceSet.MAIN_SOURCE_SET_NAME) {
                     resources.srcDir(generateTask)
-                    if (libraries != null) {
-                        configurations.getByName(compileOnlyConfigurationName).extendsFrom(libraries)
-                    }
+                    configurations.getByName(compileOnlyConfigurationName).extendsFrom(libraries)
                 }
             }
         }
     }
 
     protected abstract fun setDefaults(project: Project, description: T)
-    protected abstract fun setLibraries(libraries: ResolvedComponentResult?, description: T)
+    protected open fun setLibraries(libraries: ResolvedComponentResult?, description: T) {}
     protected abstract fun validate(description: T)
 
 }

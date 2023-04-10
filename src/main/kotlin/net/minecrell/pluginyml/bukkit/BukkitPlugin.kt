@@ -26,9 +26,9 @@ package net.minecrell.pluginyml.bukkit
 
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
+import net.minecrell.pluginyml.collectLibraries
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.yml") {
 
@@ -47,10 +47,7 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
     }
 
     override fun setLibraries(libraries: ResolvedComponentResult?, description: BukkitPluginDescription) {
-        val resolved = libraries?.let {
-            it.dependencies.map { d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d") }
-        }
-        description.libraries = ((description.libraries ?: listOf()) + (resolved ?: listOf())).distinct()
+        description.libraries = libraries.collectLibraries(description.libraries)
     }
 
     override fun validate(description: BukkitPluginDescription) {

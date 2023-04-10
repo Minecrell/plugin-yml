@@ -35,7 +35,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
-class NukkitPluginDescription(project: Project) : PluginDescription {
+class NukkitPluginDescription(project: Project) : PluginDescription() {
 
     @Input var name: String? = null
     @Input var main: String? = null

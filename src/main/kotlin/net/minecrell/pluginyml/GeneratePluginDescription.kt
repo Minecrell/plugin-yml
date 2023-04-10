@@ -33,10 +33,10 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import net.minecrell.pluginyml.paper.PaperPluginDescription
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.artifacts.repositories.UrlArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -52,8 +52,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
     abstract val fileName: Property<String>
 
     @get:Input
-    @get:Optional
-    abstract val generatePluginLibraries: Property<Boolean>
+    abstract val librariesJsonFileName: Property<String>
 
     @get:Input
     @get:Optional
@@ -75,28 +74,25 @@ abstract class GeneratePluginDescription : DefaultTask() {
         @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...
         module.addSerializer(StdDelegatingSerializer(NamedDomainObjectCollection::class.java,
             NamedDomainObjectCollectionConverter as Converter<NamedDomainObjectCollection<*>, *>))
+        module.addSerializer(StdDelegatingSerializer(UrlArtifactRepository::class.java, UrlArtifactRepositoryConverter))
 
         val mapper = ObjectMapper(factory)
             .registerKotlinModule()
             .registerModule(module)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         val pluginDescription = pluginDescription.get()
-
         mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription)
-        if (generatePluginLibraries.isPresent) buildPluginLibraries(pluginDescription)
-    }
 
-    private fun buildPluginLibraries(pluginDescription: PluginDescription) {
-        if (pluginDescription is PaperPluginDescription) {
-            val repos = this.project.repositories.filterIsInstance<MavenArtifactRepository>().map { it.url.toString() }.toList()
-            val dependencies = pluginDescription.libraries!!.toList()
+        if (pluginDescription.generateLibrariesJson) {
+            val repos = this.project.repositories.withType(MavenArtifactRepository::class.java)
+            val dependencies = librariesRootComponent.orNull.collectLibraries()
             val pluginLibraries = PluginLibraries(repos, dependencies)
 
-            val mapper = ObjectMapper()
+            val jsonMapper = ObjectMapper()
                 .registerKotlinModule()
-                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
-            mapper.writeValue(outputDirectory.file("plugin-libraries.json").get().asFile, pluginLibraries)
+                .registerModule(module)
+                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            jsonMapper.writeValue(outputDirectory.file(librariesJsonFileName).get().asFile, pluginLibraries)
         }
     }
 
@@ -107,5 +103,13 @@ abstract class GeneratePluginDescription : DefaultTask() {
         }
     }
 
-    data class PluginLibraries(val repositories: List<String>, val dependencies: List<String>)
+    object UrlArtifactRepositoryConverter : StdConverter<UrlArtifactRepository, String>() {
+        override fun convert(value: UrlArtifactRepository): String = value.url.toString()
+    }
+
+    data class PluginLibraries(
+        val repositories: NamedDomainObjectCollection<MavenArtifactRepository>,
+        val dependencies: List<String>
+    )
+
 }

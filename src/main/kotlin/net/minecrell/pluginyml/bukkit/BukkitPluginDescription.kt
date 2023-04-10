@@ -35,7 +35,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
-class BukkitPluginDescription(project: Project) : PluginDescription {
+class BukkitPluginDescription(project: Project) : PluginDescription() {
 
     @Input @Optional @JsonProperty("api-version") var apiVersion: String? = null
     @Input var name: String? = null

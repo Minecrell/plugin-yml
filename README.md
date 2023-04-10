@@ -1,5 +1,5 @@
 # plugin-yml
-[plugin-yml] is a simple Gradle plugin that generates the `plugin.yml` plugin description file for Bukkit plugins, 
+[plugin-yml] is a simple Gradle plugin that generates the `plugin.yml` plugin description file for Bukkit plugins,
 `paper-plugin.yml` for Paper plugins, `bungee.yml` for Bungee plugins or `nukkit.yml` for Nukkit plugins based on
 the Gradle project. Various properties are set automatically (e.g. project name, version or description) and
 additional properties can be added using a simple DSL.
@@ -151,89 +151,54 @@ bukkit {
 </details>
 
 ### Paper
-
-#### Importing library via paperLibrary
-
-Paperplugins do not support library loading like spigot does. 
-Instead, libraries and repositories need to be defined via a PluginLoader implementation inside your plugin.
-To give you access to repositories and dependencies marked as `paperLibrary` creates a file called `plugin-libraries.json`.
-To generate this file you need to set `generatePluginLibraries` to `true`
-You can load them as a resource afterward.
-
-An example `PluginLoader` implementation could look like this:
-```java
-public class Loader implements PluginLoader {
-    @Override
-    public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
-        MavenLibraryResolver resolver = new MavenLibraryResolver();
-        PluginLibraries pluginLibraries = load();
-        pluginLibraries.asDependencies().forEach(resolver::addDependency);
-        pluginLibraries.asRepositories().forEach(resolver::addRepository);
-        classpathBuilder.addLibrary(resolver);
-    }
-
-    public PluginLibraries load() {
-        try (var in = getClass().getResourceAsStream("/plugin-libraries.json")) {
-            return new Gson().fromJson(new String(in.readAllBytes()), PluginLibraries.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private record PluginLibraries(List<String> repositories, List<String> dependencies) {
-        public List<Dependency> asDependencies() {
-            return dependencies.stream()
-                    .map(d -> new Dependency(new DefaultArtifact(d), null))
-                    .toList();
-        }
-
-        public List<RemoteRepository> asRepositories() {
-            AtomicInteger integer = new AtomicInteger();
-            return repositories.stream()
-                    .map(d -> new RemoteRepository.Builder("maven" + integer.getAndIncrement(), "default", d).build())
-                    .toList();
-        }
-    }
-}
-```
-
 <details>
 <summary><strong>Groovy</strong></summary>
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.paper' version '0.5.3'
+    id 'net.minecrell.plugin-yml.paper' version '0.6.0-SNAPSHOT'
 }
 
+// NOTE: Paper does not support plugin libraries without additional setup!
+// Please see "Plugin Libraries JSON" in the README for instructions.
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
     library 'com.google.code.gson:gson:2.8.7' // All platforms
     paperLibrary 'com.google.code.gson:gson:2.8.7' // Bukkit only
 }
 
-paper {    
+paper {
     // Default values can be overridden if needed
     // name = 'TestPlugin'
     // version = '1.0'
     // description = 'This is a test plugin'
     // website = 'https://example.com'
     // author = 'Notch'
-    
+
     // Plugin main class (required)
     main = 'com.example.testplugin.TestPlugin'
 
-    // generate plugin-libraries.json
-    generatePluginLibraries = true
+    // Plugin bootstrapper/loader (optional)
+    bootstrapper = 'com.example.testplugin.bootstrap.TestPluginBootstrap'
+    loader = 'com.example.testplugin.loader.TestPluginLoader'
+    hasOpenClassloader = false
+
+    // generate paper-libraries.json?
+    generateLibrariesJson = true
 
     // Mark plugin for supporting Folia
     foliaSupported = true
 
-    // API version (Needs to be 1.19 or higher)
+    // API version (needs to be 1.19 or higher)
     apiVersion = '1.19'
-    
-    // Other possible properties from plugin.yml (optional)
-    load = 'STARTUP' // or 'POSTWORLD' 
+
+    // Other possible properties from paper-plugin.yml (optional)
+    load = 'STARTUP' // or 'POSTWORLD'
     authors = ['Notch', 'Notch2']
+    contributors = ['Notch3', 'Notch4']
+    prefix = 'TEST'
+    provides = ['TestPluginOldName', 'TestPlug']
+
     depends {
         'WorldEdit' {
             required : true
@@ -242,27 +207,17 @@ paper {
         'Essentials' {
         }
     }
-    
     loadBefore {
-        'BrokenPlugin' {
+        'BeforePlugin' {
             bootstrap: true
         }
     }
-    prefix = 'TEST'
-    defaultPermission = 'OP' // 'TRUE', 'FALSE', 'OP' or 'NOT_OP'
-    provides = ['TestPluginOldName', 'TestPlug']
-    
-    commands {
-        test {
-            description = 'This is a test command!'
-            aliases = ['t']
-            permission = 'testplugin.test'
-            usage = 'Just run the command!'
-            // permissionMessage = 'You may not test this command!' 
+    loadAfter {
+        'AfterPlugin' {
+            bootstrap: true
         }
-        // ...
     }
-    
+
     permissions {
         'testplugin.*' {
             children = ['testplugin.test'] // Defaults permissions to true
@@ -286,6 +241,8 @@ plugins {
     id("net.minecrell.plugin-yml.paper") version "0.5.3"
 }
 
+// NOTE: Paper does not support plugin libraries without additional setup!
+// Please see "Plugin Libraries JSON" in the README for instructions.
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
     library(kotlin("stdlib")) // All platforms
@@ -300,23 +257,32 @@ paper {
     // description = "This is a test plugin"
     // website = "https://example.com"
     // author = "Notch"
-    
+
     // Plugin main class (required)
     main = "com.example.testplugin.TestPlugin"
-    
-    // generate plugin-libraries.json
-    generatePluginLibraries = true
-    
+
+    // Plugin bootstrapper/loader (optional)
+    bootstrapper = "com.example.testplugin.bootstrap.TestPluginBootstrap"
+    loader = "com.example.testplugin.loader.TestPluginLoader"
+    hasOpenClassloader = false
+
+    // generate paper-libraries.json?
+    generateLibrariesJson = true
+
     // Mark plugin for supporting Folia
     foliaSupported = true
 
     // API version (Needs to be 1.19 or higher)
     apiVersion = "1.19"
-    
+
     // Other possible properties from plugin.yml (optional)
-    load = PaperPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD 
+    load = PaperPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD
     authors = listOf("Notch", "Notch2")
-    
+
+    prefix = "TEST"
+    defaultPermission = PaperPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+    provides = listOf("TestPluginOldName", "TestPlug")
+
     depends {
         // Required dependency
         register("WorldEdit") {
@@ -327,28 +293,17 @@ paper {
         register("Essentials") {
         }
     }
-    
     loadBefore {
-        register("BrokenPlugin") {
+        register("BeforePlugin") {
             bootstrap = true
         }
     }
-    
-    prefix = "TEST"
-    defaultPermission = PaperPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
-    provides = listOf("TestPluginOldName", "TestPlug")
-    
-    commands {
-        register("test") {
-            description = "This is a test command!"
-            aliases = listOf("t")
-            permission = "testplugin.test"
-            usage = "Just run the command!"
-            // permissionMessage = "You may not test this command!" 
+    loadAfter {
+        register("AfterPlugin") {
+            bootstrap = true
         }
-        // ...
     }
-    
+
     permissions {
         register("testplugin.*") {
             children = listOf("testplugin.test") // Defaults permissions to true
@@ -536,5 +491,101 @@ nukkit {
 }
 ```
 </details>
+
+## Plugin Libraries JSON
+Paper and Nukkit do not support specifying libraries directly in the plugin description file.
+plugin-yml still allows defining dependencies as `paperLibrary` and `nukkitLibrary` but these dependencies are not
+exported by default. Additional runtime plugin code is needed to set them up and load them. To simplify this, plugin-yml
+can export them in a `paper-libraries.json` / `nukkit-libraries.json` file with the following structure:
+
+```json
+{
+    "repositories": {"MavenRepo": "https://repo.maven.apache.org/maven2/"},
+    "dependencies": ["com.google.code.gson:gson:2.8.5"]
+}
+```
+
+This file is only generated after setting `generateLibrariesJson` to `true`, e.g.:
+
+```kotlin
+paper {
+    // generate paper-libraries.json
+    generateLibrariesJson = true
+}
+```
+
+The JSON file is included in the plugin JAR and can be parsed at runtime to load the additional libraries.
+
+### Paper
+Define a custom `PluginLoader` inside your plugin code, for example:
+
+<details>
+<summary><strong>Example PluginLoader</strong></summary>
+
+```kotlin
+paper {
+    loader = "com.example.testplugin.PluginLibrariesLoader"
+    generateLibrariesJson = true
+}
+```
+
+```java
+import com.google.gson.Gson;
+import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
+import io.papermc.paper.plugin.loader.PluginLoader;
+import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+public class PluginLibrariesLoader implements PluginLoader {
+    @Override
+    public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
+        MavenLibraryResolver resolver = new MavenLibraryResolver();
+        PluginLibraries pluginLibraries = load();
+        pluginLibraries.asDependencies().forEach(resolver::addDependency);
+        pluginLibraries.asRepositories().forEach(resolver::addRepository);
+        classpathBuilder.addLibrary(resolver);
+    }
+
+    public PluginLibraries load() {
+        try (var in = getClass().getResourceAsStream("/paper-libraries.json")) {
+            return new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), PluginLibraries.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private record PluginLibraries(Map<String, String> repositories, List<String> dependencies) {
+        public Stream<Dependency> asDependencies() {
+            return dependencies.stream()
+                    .map(d -> new Dependency(new DefaultArtifact(d), null));
+        }
+
+        public Stream<RemoteRepository> asRepositories() {
+            return repositories.entrySet().stream()
+                    .map(e -> new RemoteRepository.Builder(e.getKey(), "default", e.getValue()).build());
+        }
+    }
+}
+```
+
+</details>
+
+### Nukkit
+(No example code available yet)
+
+### Bukkit/Bungee
+`generateLibrariesJson` is also supported on Bukkit/Bungee (to generate `bukkit-libraries.json`/`bungee-libraries.json`).
+However, since these two allow specifying libraries directly inside the `plugin.yml` the option is generally not needed
+there.
 
 [plugin-yml]: https://github.com/Minecrell/plugin-yml

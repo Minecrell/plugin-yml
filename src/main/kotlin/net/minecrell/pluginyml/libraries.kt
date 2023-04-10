@@ -22,19 +22,14 @@
  * THE SOFTWARE.
  */
 
-package net.minecrell.pluginyml.bungee
+package net.minecrell.pluginyml
 
-import net.minecrell.pluginyml.PluginDescription
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
-class BungeePluginDescription : PluginDescription() {
-    @Input var name: String? = null
-    @Input var main: String? = null
-    @Input @Optional var version: String? = null
-    @Input @Optional var author: String? = null
-    @Input @Optional var depends: Set<String>? = null
-    @Input @Optional var softDepends: Set<String>? = null
-    @Input @Optional var description: String? = null
-    @Input @Optional var libraries: List<String>? = null
+fun ResolvedComponentResult?.collectLibraries(additional: List<String>? = null): List<String> {
+    val resolved = this?.dependencies?.map {
+        d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d")
+    }
+    return ((additional ?: listOf()) + (resolved ?: listOf())).distinct()
 }

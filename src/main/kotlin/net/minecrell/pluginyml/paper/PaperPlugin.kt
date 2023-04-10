@@ -27,8 +27,6 @@ package net.minecrell.pluginyml.paper
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugin.yml") {
 
@@ -48,17 +46,6 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
         description.description = description.description ?: project.description
         description.website = description.website ?: project.findProperty("url")?.toString()
         description.author = description.author ?: project.findProperty("author")?.toString()
-    }
-
-
-    override fun setLibraries(libraries: ResolvedComponentResult?, description: PaperPluginDescription) {
-        val resolved = libraries?.let {
-            it.dependencies.map { d ->
-                (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString()
-                        ?: error("No moduleVersion for $d")
-            }
-        }
-        description.libraries = ((description.libraries ?: listOf()) + (resolved ?: listOf())).distinct()
     }
 
     override fun validate(description: PaperPluginDescription) {

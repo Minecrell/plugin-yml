@@ -276,11 +276,11 @@ paper {
     apiVersion = "1.19"
 
     // Other possible properties from plugin.yml (optional)
-    load = PaperPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP // or POSTWORLD
     authors = listOf("Notch", "Notch2")
 
     prefix = "TEST"
-    defaultPermission = PaperPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+    defaultPermission = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
     provides = listOf("TestPluginOldName", "TestPlug")
 
     depends {

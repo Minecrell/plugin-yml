@@ -31,7 +31,6 @@ import net.minecrell.pluginyml.PluginDescription
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
@@ -52,9 +51,7 @@ class NukkitPluginDescription(project: Project) : PluginDescription {
     @Input @Optional var prefix: String? = null
 
     @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
-    @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
-        Permission(project, it)
-    }
+    @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
     // For Groovy DSL
     fun commands(closure: Closure<Unit>) = commands.configure(closure)
@@ -73,14 +70,12 @@ class NukkitPluginDescription(project: Project) : PluginDescription {
         @Input @Optional var usage: String? = null
     }
 
-    data class Permission(@Internal @JsonIgnore val project: Project, @Input @JsonIgnore val name: String) {
+    class Permission(@Input @JsonIgnore val name: String, project: Project) {
 
         @Input @Optional var description: String? = null
         @Input @Optional var default: Default? = null
 
-        @Nested val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java) {
-            Permission(project, it)
-        }
+        @Nested val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
         // For Groovy DSL
         fun children(closure: Closure<Unit>) = children.configure(closure)

@@ -169,7 +169,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     id 'java'
-    id 'net.minecrell.plugin-yml.paper' version '0.5.3'
+    id 'net.minecrell.plugin-yml.paper' version '0.6.0-SNAPSHOT'
 }
 
 repositories {
@@ -286,7 +286,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     java // or `kotlin("jvm") version "..."`
-    id("net.minecrell.plugin-yml.paper") version "0.5.3"
+    id("net.minecrell.plugin-yml.paper") version "0.6.0-SNAPSHOT"
 }
 
 repositories {

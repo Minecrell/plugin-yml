@@ -27,7 +27,9 @@ package net.minecrell.pluginyml.paper
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.KebabCaseStrategy
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
@@ -38,9 +40,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
+@JsonNaming(KebabCaseStrategy::class)
 class PaperPluginDescription(project: Project) : PluginDescription() {
-
-    @Input @JsonProperty("api-version") var apiVersion: String? = null
+    @Input var apiVersion: String? = null
     @Input var name: String? = null
     @Input var version: String? = null
     @Input var main: String? = null
@@ -53,10 +55,10 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Input @Optional var contributors: List<String>? = null
     @Input @Optional var website: String? = null
     @Input @Optional var prefix: String? = null
-    @Input @Optional @JsonProperty("defaultPerm") var defaultPermission: Permission.Default? = null
+    @Input @Optional var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
-    @Input @Optional @JsonProperty("has-open-classloader") var hasOpenClassloader: Boolean? = null
-    @Input @Optional @JsonProperty("folia-supported") var foliaSupported: Boolean? = null
+    @Input @Optional var hasOpenClassloader: Boolean? = null
+    @Input @Optional var foliaSupported: Boolean? = null
 
     @Nested @Optional @JsonIgnore
     var serverDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)

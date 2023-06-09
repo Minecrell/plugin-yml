@@ -24,6 +24,7 @@
 
 package net.minecrell.pluginyml.paper
 
+import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -62,7 +63,7 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Nested @Optional @JsonIgnore
     var bootstrapDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
 
-    @JsonProperty("dependencies")
+    @JsonGetter
     fun dependencies(): Map<String, NamedDomainObjectContainer<DependencyDefinition>> = mapOf(
         "server" to serverDependencies,
         "bootstrap" to bootstrapDependencies,

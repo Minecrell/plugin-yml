@@ -62,7 +62,7 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Nested @Optional @JsonIgnore
     var bootstrapDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
 
-    @JsonProperty("dependencies") @JsonSerialize(contentAs = Collection::class)
+    @JsonProperty("dependencies")
     fun dependencies(): Map<String, NamedDomainObjectContainer<DependencyDefinition>> = mapOf(
         "server" to serverDependencies,
         "bootstrap" to bootstrapDependencies,
@@ -75,7 +75,7 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     fun serverDependencies(closure: Closure<Unit>) = serverDependencies.configure(closure)
     fun bootstrapDependencies(closure: Closure<Unit>) = bootstrapDependencies.configure(closure)
 
-    data class DependencyDefinition(@Input val name: String) {
+    data class DependencyDefinition(@Input @JsonIgnore val name: String) {
         @Input var load: RelativeLoadOrder = RelativeLoadOrder.OMIT
         @Input var required: Boolean = true
         @Input var joinClasspath: Boolean = true

@@ -22,23 +22,25 @@
  * THE SOFTWARE.
  */
 
-package net.minecrell.pluginyml.bukkit
+package net.minecrell.pluginyml.paper
 
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
-import net.minecrell.pluginyml.collectLibraries
 import org.gradle.api.Project
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 
-class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.yml") {
+class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugin.yml") {
 
     companion object {
-        @JvmStatic private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+        @JvmStatic
+        private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+        @JvmStatic
+        private val INVALID_NAMESPACES = listOf("net.minecraft.", "org.bukkit.", "io.papermc.paper.", "com.destroystokoyo.paper.")
+
     }
 
-    override fun createExtension(project: Project) = BukkitPluginDescription(project)
+    override fun createExtension(project: Project) = PaperPluginDescription(project)
 
-    override fun setDefaults(project: Project, description: BukkitPluginDescription) {
+    override fun setDefaults(project: Project, description: PaperPluginDescription) {
         description.name = description.name ?: project.name
         description.version = description.version ?: project.version.toString()
         description.description = description.description ?: project.description
@@ -46,25 +48,32 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         description.author = description.author ?: project.findProperty("author")?.toString()
     }
 
-    override fun setLibraries(libraries: ResolvedComponentResult?, description: BukkitPluginDescription) {
-        description.libraries = libraries.collectLibraries(description.libraries)
-    }
-
-    override fun validate(description: BukkitPluginDescription) {
+    override fun validate(description: PaperPluginDescription) {
         val name = description.name ?: throw InvalidPluginDescriptionException("Plugin name is not set")
         if (!VALID_NAME.matches(name)) throw InvalidPluginDescriptionException("Invalid plugin name: should match $VALID_NAME")
 
         if (description.version.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin version is not set")
+        description.apiVersion ?: throw InvalidPluginDescriptionException("Plugin API version is not set")
+        description.apiVersion?.let { apiVersion ->
+            if (apiVersion < "1.19") throw InvalidPluginDescriptionException("Plugin API version must be at least 1.19")
+        }
 
         val main = description.main ?: throw InvalidPluginDescriptionException("Main class is not defined")
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
-        if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
+        validateNamespace(description.main, "Main")
+        validateNamespace(description.bootstrapper, "Bootstrapper")
+        validateNamespace(description.loader, "Loader")
 
-        for (command in description.commands) {
-            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
-            command.aliases?.forEach { alias ->
-                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
-            }
+        for (before in description.loadBefore) {
+            if (before.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadBefore can not be empty")
+        }
+
+        for (after in description.loadAfter) {
+            if (after.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadAfter can not be empty")
+        }
+
+        for (depend in description.depends) {
+            if (depend.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in depends can not be empty")
         }
 
         if (description.provides?.all(VALID_NAME::matches) == false) {
@@ -72,4 +81,11 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         }
     }
 
+    private fun validateNamespace(namespace: String?, name: String) {
+        for (invalidNamespace in INVALID_NAMESPACES) {
+            if (namespace?.startsWith(invalidNamespace) == true) {
+                throw InvalidPluginDescriptionException("$name may not be within the $invalidNamespace namespace")
+            }
+        }
+    }
 }

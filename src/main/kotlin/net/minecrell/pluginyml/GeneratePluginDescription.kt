@@ -35,6 +35,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.artifacts.repositories.UrlArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -48,6 +50,9 @@ abstract class GeneratePluginDescription : DefaultTask() {
 
     @get:Input
     abstract val fileName: Property<String>
+
+    @get:Input
+    abstract val librariesJsonFileName: Property<String>
 
     @get:Input
     @get:Optional
@@ -64,26 +69,47 @@ abstract class GeneratePluginDescription : DefaultTask() {
         val factory = YAMLFactory()
             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
             .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-            .enable(YAMLGenerator.Feature.INDENT_ARRAYS)
 
         val module = SimpleModule()
         @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...
         module.addSerializer(StdDelegatingSerializer(NamedDomainObjectCollection::class.java,
             NamedDomainObjectCollectionConverter as Converter<NamedDomainObjectCollection<*>, *>))
+        module.addSerializer(StdDelegatingSerializer(UrlArtifactRepository::class.java, UrlArtifactRepositoryConverter))
 
         val mapper = ObjectMapper(factory)
             .registerKotlinModule()
             .registerModule(module)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+        val pluginDescription = pluginDescription.get()
+        mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription)
 
-        mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription.get())
+        if (pluginDescription.generateLibrariesJson) {
+            val repos = this.project.repositories.withType(MavenArtifactRepository::class.java)
+            val dependencies = librariesRootComponent.orNull.collectLibraries()
+            val pluginLibraries = PluginLibraries(repos, dependencies)
+
+            val jsonMapper = ObjectMapper()
+                .registerKotlinModule()
+                .registerModule(module)
+                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
+            jsonMapper.writeValue(outputDirectory.file(librariesJsonFileName).get().asFile, pluginLibraries)
+        }
     }
 
-    object NamedDomainObjectCollectionConverter : StdConverter<NamedDomainObjectCollection<Any>, Map<String, Any>>()  {
+    object NamedDomainObjectCollectionConverter : StdConverter<NamedDomainObjectCollection<Any>, Map<String, Any>>() {
         override fun convert(value: NamedDomainObjectCollection<Any>): Map<String, Any> {
             val namer = value.namer
             return value.associateBy { namer.determineName(it) }
         }
     }
+
+    object UrlArtifactRepositoryConverter : StdConverter<UrlArtifactRepository, String>() {
+        override fun convert(value: UrlArtifactRepository): String = value.url.toString()
+    }
+
+    data class PluginLibraries(
+        val repositories: NamedDomainObjectCollection<MavenArtifactRepository>,
+        val dependencies: List<String>
+    )
 
 }

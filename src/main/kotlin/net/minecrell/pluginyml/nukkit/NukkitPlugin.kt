@@ -27,15 +27,9 @@ package net.minecrell.pluginyml.nukkit
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.result.ResolvedComponentResult
 
 class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.yml") {
     override fun createExtension(project: Project) = NukkitPluginDescription(project)
-
-    override fun createConfiguration(project: Project): Configuration? {
-        return null
-    }
 
     override fun setDefaults(project: Project, description: NukkitPluginDescription) {
         description.name = description.name ?: project.name
@@ -43,9 +37,6 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
         description.description = description.description ?: project.description
         description.website = description.website ?: project.findProperty("url")?.toString()
         description.author = description.author ?: project.findProperty("author")?.toString()
-    }
-
-    override fun setLibraries(libraries: ResolvedComponentResult?, description: NukkitPluginDescription) {
     }
 
     override fun validate(description: NukkitPluginDescription) {

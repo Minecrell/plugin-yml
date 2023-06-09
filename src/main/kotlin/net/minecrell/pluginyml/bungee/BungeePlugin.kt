@@ -26,9 +26,9 @@ package net.minecrell.pluginyml.bungee
 
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
+import net.minecrell.pluginyml.collectLibraries
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.yml") {
 
@@ -42,10 +42,7 @@ class BungeePlugin : PlatformPlugin<BungeePluginDescription>("Bungee", "bungee.y
     }
 
     override fun setLibraries(libraries: ResolvedComponentResult?, description: BungeePluginDescription) {
-        val resolved = libraries?.let {
-            it.dependencies.map { d -> (d as? ResolvedDependencyResult)?.selected?.moduleVersion?.toString() ?: error("No moduleVersion for $d") }
-        }
-        description.libraries = ((description.libraries ?: listOf()) + (resolved ?: listOf())).distinct()
+        description.libraries = libraries.collectLibraries(description.libraries)
     }
 
     override fun validate(description: BungeePluginDescription) {

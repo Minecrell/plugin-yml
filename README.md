@@ -94,7 +94,7 @@ bukkit {
 
 ```kotlin
 plugins {
-    java // or `kotlin("jvm") version "1.8.21"`
+    java // or `kotlin("jvm") version "..."`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
@@ -186,8 +186,6 @@ dependencies {
 
     // Make use of classes included by `bootstrapDependencies` and `serverDependencies` sections below
     //   compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.14'
-    // Shadow an implementation using shadow plugin:
-    //   implementation 'dev.samstevens.totp:totp:1.7.1'
 }
 
 paper {
@@ -229,13 +227,13 @@ paper {
 
         // During bootstrap, load BeforePlugin's bootstrap code before ours
         'BeforePlugin' {
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            load = 'BEFORE'
             required = false
             joinClasspath = false
         }
         // During bootstrap, load AfterPlugin's bootstrap code after ours
         'AfterPlugin' {
-            load = PaperPluginDescription.RelativeLoadOrder.AFTER
+            load = 'AFTER'
             required = false
             joinClasspath = false
         }
@@ -244,12 +242,12 @@ paper {
     serverDependencies {
         // During server run time, require LuckPerms, add it to the classpath, and load it before us
         'LuckPerms' {
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            load = 'BEFORE'
         }
 
         // During server run time, require WorldEdit, add it to the classpath, and load it before us
         'WorldEdit' {
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            load = 'BEFORE'
         }
 
         // Optional dependency, add it to classpath if it is available
@@ -287,7 +285,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
-    java // or `kotlin("jvm") version "1.8.21"`
+    java // or `kotlin("jvm") version "..."`
     id("net.minecrell.plugin-yml.paper") version "0.5.3"
 }
 
@@ -306,8 +304,6 @@ dependencies {
 
     // Make use of classes included by `bootstrapDependencies` and `serverDependencies` sections below
     //   compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14")
-    // Shadow an implementation using shadow plugin, to create a far jar:
-    //   implementation("dev.samstevens.totp", "totp", "1.7.1")
 }
 
 paper {
@@ -435,7 +431,7 @@ bungee {
 
 ```kotlin
 plugins {
-    java // or `kotlin("jvm") version "1.8.21"`
+    java // or `kotlin("jvm") version "..."`
     id("net.minecrell.plugin-yml.bungee") version "0.5.3"
 }
 
@@ -523,7 +519,7 @@ nukkit {
 
 ```kotlin
 plugins {
-    java // or `kotlin("jvm") version "1.8.21"`
+    java // or `kotlin("jvm") version "..."`
     id("net.minecrell.plugin-yml.nukkit") version "0.5.3"
 }
 

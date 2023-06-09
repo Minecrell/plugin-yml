@@ -172,6 +172,11 @@ plugins {
     id 'net.minecrell.plugin-yml.paper' version '0.5.3'
 }
 
+repositories {
+    mavenCentral()
+    maven { url "https://papermc.io/repo/repository/maven-public/" }
+}
+
 // NOTE: Paper does not support plugin libraries without additional setup!
 // Please see "Plugin Libraries JSON" in the README for instructions.
 dependencies {
@@ -284,6 +289,11 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
     java // or `kotlin("jvm") version "1.8.21"`
     id("net.minecrell.plugin-yml.paper") version "0.5.3"
+}
+
+repositories {
+    mavenCentral()
+    maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
 }
 
 // NOTE: Paper does not support plugin libraries without additional setup!

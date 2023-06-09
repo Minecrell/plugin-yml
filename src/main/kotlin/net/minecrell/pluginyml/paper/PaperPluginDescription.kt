@@ -55,7 +55,7 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Input @Optional var contributors: List<String>? = null
     @Input @Optional var website: String? = null
     @Input @Optional var prefix: String? = null
-    @Input @Optional var defaultPermission: Permission.Default? = null
+    @Input @Optional @JsonProperty("defaultPerm") var defaultPermission: Permission.Default? = null
     @Input @Optional var provides: List<String>? = null
     @Input @Optional var hasOpenClassloader: Boolean? = null
     @Input @Optional var foliaSupported: Boolean? = null

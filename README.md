@@ -31,8 +31,8 @@ plugins {
 
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library 'com.google.code.gson:gson:2.8.7' // All platforms
-    bukkitLibrary 'com.google.code.gson:gson:2.8.7' // Bukkit only
+    library 'com.google.code.gson:gson:2.10.1' // All platform plugins
+    bukkitLibrary 'com.google.code.gson:gson:2.10.1' // Bukkit only
 }
 
 bukkit {
@@ -94,14 +94,15 @@ bukkit {
 
 ```kotlin
 plugins {
+    java // or `kotlin("jvm") version "1.8.21"`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library(kotlin("stdlib")) // All platforms
-    library("com.google.code.gson", "gson", "2.8.7") // All platforms
-    bukkitLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
+    // library(kotlin("stdlib")) // When using kotlin
+    library("com.google.code.gson", "gson", "2.10.1") // All platform plugins
+    bukkitLibrary("com.google.code.gson", "gson", "2.10.1") // Bukkit only
 }
 
 bukkit {
@@ -163,16 +164,25 @@ bukkit {
 <summary><strong>Groovy</strong></summary>
 
 ```groovy
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
+
 plugins {
-    id 'net.minecrell.plugin-yml.paper' version '0.6.0-SNAPSHOT'
+    id 'java'
+    id 'net.minecrell.plugin-yml.paper' version '0.5.3'
 }
 
 // NOTE: Paper does not support plugin libraries without additional setup!
 // Please see "Plugin Libraries JSON" in the README for instructions.
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library 'com.google.code.gson:gson:2.8.7' // All platforms
-    paperLibrary 'com.google.code.gson:gson:2.8.7' // Bukkit only
+    library 'com.google.code.gson:gson:2.10.1' // All platform plugins
+    paperLibrary 'com.google.code.gson:gson:2.10.1' // Paper only
+
+    // Make use of classes included by `bootstrapDependencies` and `serverDependencies` sections below
+    //   compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.14'
+    // Shadow an implementation using shadow plugin:
+    //   implementation 'dev.samstevens.totp:totp:1.7.1'
 }
 
 paper {
@@ -191,7 +201,7 @@ paper {
     loader = 'com.example.testplugin.loader.TestPluginLoader'
     hasOpenClassloader = false
 
-    // generate paper-libraries.json?
+    // Generate paper-libraries.json from `library` and `paperLibrary` in `dependencies`
     generateLibrariesJson = true
 
     // Mark plugin for supporting Folia
@@ -207,22 +217,45 @@ paper {
     prefix = 'TEST'
     provides = ['TestPluginOldName', 'TestPlug']
 
-    depends {
-        'WorldEdit' {
-            required : true
-            bootstrap: true
-        }
-        'Essentials' {
-        }
-    }
-    loadBefore {
+    // Bootstrap dependencies - Very rarely needed
+    bootstrapDependencies {
+        // Required dependency during bootstrap
+        'WorldEdit' {}
+
+        // During bootstrap, load BeforePlugin's bootstrap code before ours
         'BeforePlugin' {
-            bootstrap: true
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+            required = false
+            joinClasspath = false
+        }
+        // During bootstrap, load AfterPlugin's bootstrap code after ours
+        'AfterPlugin' {
+            load = PaperPluginDescription.RelativeLoadOrder.AFTER
+            required = false
+            joinClasspath = false
         }
     }
-    loadAfter {
-        'AfterPlugin' {
-            bootstrap: true
+
+    serverDependencies {
+        // During server run time, require LuckPerms, add it to the classpath, and load it before us
+        'LuckPerms' {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+
+        // During server run time, require WorldEdit, add it to the classpath, and load it before us
+        'WorldEdit' {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+
+        // Optional dependency, add it to classpath if it is available
+        'ProtocolLib' {
+            required = false
+        }
+
+        // During server run time, optionally depend on Essentials but do not add it to the classpath
+        'Essentials' {
+            required = false
+            joinClasspath = false
         }
     }
 
@@ -245,7 +278,11 @@ paper {
 <summary><strong>kotlin-dsl</strong></summary>
 
 ```kotlin
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
+
 plugins {
+    java // or `kotlin("jvm") version "1.8.21"`
     id("net.minecrell.plugin-yml.paper") version "0.5.3"
 }
 
@@ -253,9 +290,14 @@ plugins {
 // Please see "Plugin Libraries JSON" in the README for instructions.
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library(kotlin("stdlib")) // All platforms
-    library("com.google.code.gson", "gson", "2.8.7") // All platforms
-    paperLibrary("com.google.code.gson", "gson", "2.8.7") // Bukkit only
+    // library(kotlin("stdlib")) // When using kotlin
+    library("com.google.code.gson", "gson", "2.10.1") // All platform plugins
+    paperLibrary("com.google.code.gson", "gson", "2.10.1") // Paper only
+
+    // Make use of classes included by `bootstrapDependencies` and `serverDependencies` sections below
+    //   compileOnly("com.sk89q.worldedit", "worldedit-bukkit", "7.2.14")
+    // Shadow an implementation using shadow plugin, to create a far jar:
+    //   implementation("dev.samstevens.totp", "totp", "1.7.1")
 }
 
 paper {
@@ -274,7 +316,7 @@ paper {
     loader = "com.example.testplugin.loader.TestPluginLoader"
     hasOpenClassloader = false
 
-    // generate paper-libraries.json?
+    // Generate paper-libraries.json from `library` and `paperLibrary` in `dependencies`
     generateLibrariesJson = true
 
     // Mark plugin for supporting Folia
@@ -291,24 +333,42 @@ paper {
     defaultPermission = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
     provides = listOf("TestPluginOldName", "TestPlug")
 
-    depends {
-        // Required dependency
-        register("WorldEdit") {
-            required = true
-            bootstrap = true
-        }
-        // Optional dependency
-        register("Essentials") {
-        }
-    }
-    loadBefore {
+    bootstrapDependencies {
+        // Required dependency during bootstrap
+        register("WorldEdit")
+
+        // During bootstrap, load BeforePlugin's bootstrap code before ours
         register("BeforePlugin") {
-            bootstrap = true
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        // During bootstrap, load AfterPlugin's bootstrap code after ours
+        register("AfterPlugin") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.AFTER
         }
     }
-    loadAfter {
-        register("AfterPlugin") {
-            bootstrap = true
+
+    serverDependencies {
+        // During server run time, require LuckPerms, add it to the classpath, and load it before us
+        register("LuckPerms") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+
+        // During server run time, require WorldEdit, add it to the classpath, and load it before us
+        register("WorldEdit") {
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+
+        // Optional dependency, add it to classpath if it is available
+        register("ProtocolLib") {
+            required = false
+        }
+
+        // During server run time, optionally depend on Essentials but do not add it to the classpath
+        register("Essentials") {
+            required = false
+            joinClasspath = false
         }
     }
 
@@ -320,7 +380,7 @@ paper {
         }
         register("testplugin.test") {
             description = "Allows you to run the test command"
-            default = PaperPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
+            default = BukkitPluginDescription.Permission.Default.OP // TRUE, FALSE, OP or NOT_OP
         }
     }
 }
@@ -339,8 +399,8 @@ plugins {
 
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library 'com.google.code.gson:gson:2.8.7' // All platforms
-    bungeeLibrary 'com.google.code.gson:gson:2.8.7' // Bungee only
+    library 'com.google.code.gson:gson:2.10.1' // All platform plugins
+    bungeeLibrary 'com.google.code.gson:gson:2.10.1' // Bungee only
 }
 
 bungee {
@@ -365,14 +425,15 @@ bungee {
 
 ```kotlin
 plugins {
+    java // or `kotlin("jvm") version "1.8.21"`
     id("net.minecrell.plugin-yml.bungee") version "0.5.3"
 }
 
 dependencies {
     // Downloaded from Maven Central when the plugin is loaded
-    library(kotlin("stdlib")) // All platforms
-    library("com.google.code.gson", "gson", "2.8.7") // All platforms
-    bungeeLibrary("com.google.code.gson", "gson", "2.8.7") // Bungee only
+    // library(kotlin("stdlib")) // When using kotlin
+    library("com.google.code.gson", "gson", "2.10.1") // All platform plugins
+    bungeeLibrary("com.google.code.gson", "gson", "2.10.1") // Bungee only
 }
 
 bungee {
@@ -452,6 +513,7 @@ nukkit {
 
 ```kotlin
 plugins {
+    java // or `kotlin("jvm") version "1.8.21"`
     id("net.minecrell.plugin-yml.nukkit") version "0.5.3"
 }
 
@@ -509,7 +571,7 @@ can export them in a `paper-libraries.json` / `nukkit-libraries.json` file with 
 ```json
 {
     "repositories": {"MavenRepo": "https://repo.maven.apache.org/maven2/"},
-    "dependencies": ["com.google.code.gson:gson:2.8.5"]
+    "dependencies": ["com.google.code.gson:gson:2.10.1"]
 }
 ```
 

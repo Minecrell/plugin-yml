@@ -24,6 +24,7 @@
 
 package net.minecrell.pluginyml.paper
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import groovy.lang.Closure
@@ -56,28 +57,34 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Input @Optional @JsonProperty("has-open-classloader") var hasOpenClassloader: Boolean? = null
     @Input @Optional @JsonProperty("folia-supported") var foliaSupported: Boolean? = null
 
-    @Nested @Optional @JsonProperty("dependencies") @JsonSerialize(`as` = Collection::class)
-    var depends: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
-    @Nested @Optional @JsonProperty("load-before") @JsonSerialize(`as` = Collection::class)
-    var loadBefore: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
-    @Nested @Optional @JsonProperty("load-after") @JsonSerialize(`as` = Collection::class)
-    var loadAfter: NamedDomainObjectContainer<LoadDefinition> = project.container(LoadDefinition::class.java)
+    @Nested @Optional @JsonIgnore
+    var serverDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
+    @Nested @Optional @JsonIgnore
+    var bootstrapDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
+
+    @JsonProperty("dependencies") @JsonSerialize(contentAs = Collection::class)
+    fun dependencies(): Map<String, NamedDomainObjectContainer<DependencyDefinition>> = mapOf(
+        "server" to serverDependencies,
+        "bootstrap" to bootstrapDependencies,
+    )
 
     @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
 
     // For Groovy DSL
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
-    fun depends(closure: Closure<Unit>) = depends.configure(closure)
-    fun loadBefore(closure: Closure<Unit>) = loadBefore.configure(closure)
-    fun loadAfter(closure: Closure<Unit>) = loadAfter.configure(closure)
+    fun serverDependencies(closure: Closure<Unit>) = serverDependencies.configure(closure)
+    fun bootstrapDependencies(closure: Closure<Unit>) = bootstrapDependencies.configure(closure)
 
     data class DependencyDefinition(@Input val name: String) {
-        @Input var required: Boolean = false
-        @Input var bootstrap: Boolean = false
+        @Input var load: RelativeLoadOrder = RelativeLoadOrder.OMIT
+        @Input var required: Boolean = true
+        @Input var joinClasspath: Boolean = true
     }
 
-    data class LoadDefinition(@Input val name: String) {
-        @Input var bootstrap: Boolean = false
+    enum class RelativeLoadOrder {
+        BEFORE,
+        AFTER,
+        OMIT,
     }
 
 }

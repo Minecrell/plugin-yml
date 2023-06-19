@@ -27,9 +27,8 @@ package net.minecrell.pluginyml.paper
 import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.annotation.JsonNaming
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.KebabCaseStrategy
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission

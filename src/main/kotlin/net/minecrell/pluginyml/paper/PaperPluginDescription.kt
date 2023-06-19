@@ -78,6 +78,7 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     fun serverDependencies(closure: Closure<Unit>) = serverDependencies.configure(closure)
     fun bootstrapDependencies(closure: Closure<Unit>) = bootstrapDependencies.configure(closure)
 
+    @JsonNaming(KebabCaseStrategy::class)
     data class DependencyDefinition(@Input @JsonIgnore val name: String) {
         @Input var load: RelativeLoadOrder = RelativeLoadOrder.OMIT
         @Input var required: Boolean = true

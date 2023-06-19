@@ -64,16 +64,11 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
         validateNamespace(description.bootstrapper, "Bootstrapper")
         validateNamespace(description.loader, "Loader")
 
-        for (before in description.loadBefore) {
-            if (before.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadBefore can not be empty")
+        for (serverDependency in description.serverDependencies) {
+            if (serverDependency.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in serverDependencies can not be empty")
         }
-
-        for (after in description.loadAfter) {
-            if (after.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in loadAfter can not be empty")
-        }
-
-        for (depend in description.depends) {
-            if (depend.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in depends can not be empty")
+        for (bootstrapDependency in description.bootstrapDependencies) {
+            if (bootstrapDependency.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in bootstrapDependencies can not be empty")
         }
 
         if (description.provides?.all(VALID_NAME::matches) == false) {

@@ -26,7 +26,7 @@ plugin-yml `0.5.2` still supports Gradle 5.0+.
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bukkit' version '0.5.3'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.6.0'
 }
 
 dependencies {
@@ -95,7 +95,7 @@ bukkit {
 ```kotlin
 plugins {
     java // or `kotlin("jvm") version "..."`
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
 dependencies {
@@ -166,7 +166,7 @@ bukkit {
 ```groovy
 plugins {
     id 'java'
-    id 'net.minecrell.plugin-yml.paper' version '0.6.0-SNAPSHOT'
+    id 'net.minecrell.plugin-yml.paper' version '0.6.0'
 }
 
 repositories {
@@ -283,7 +283,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     java // or `kotlin("jvm") version "..."`
-    id("net.minecrell.plugin-yml.paper") version "0.6.0-SNAPSHOT"
+    id("net.minecrell.plugin-yml.paper") version "0.6.0"
 }
 
 repositories {
@@ -397,7 +397,7 @@ paper {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.bungee' version '0.5.3'
+    id 'net.minecrell.plugin-yml.bungee' version '0.6.0'
 }
 
 dependencies {
@@ -429,7 +429,7 @@ bungee {
 ```kotlin
 plugins {
     java // or `kotlin("jvm") version "..."`
-    id("net.minecrell.plugin-yml.bungee") version "0.5.3"
+    id("net.minecrell.plugin-yml.bungee") version "0.6.0"
 }
 
 dependencies {
@@ -463,7 +463,7 @@ bungee {
 
 ```groovy
 plugins {
-    id 'net.minecrell.plugin-yml.nukkit' version '0.5.3'
+    id 'net.minecrell.plugin-yml.nukkit' version '0.6.0'
 }
 
 nukkit {
@@ -517,7 +517,7 @@ nukkit {
 ```kotlin
 plugins {
     java // or `kotlin("jvm") version "..."`
-    id("net.minecrell.plugin-yml.nukkit") version "0.5.3"
+    id("net.minecrell.plugin-yml.nukkit") version "0.6.0"
 }
 
 nukkit {

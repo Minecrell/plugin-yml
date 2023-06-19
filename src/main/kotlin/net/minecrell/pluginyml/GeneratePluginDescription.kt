@@ -70,6 +70,7 @@ abstract class GeneratePluginDescription : DefaultTask() {
             .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
             .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
             .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
+            .enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR)
 
         val module = SimpleModule()
         @Suppress("UNCHECKED_CAST") // Too stupid to figure out the generics here...

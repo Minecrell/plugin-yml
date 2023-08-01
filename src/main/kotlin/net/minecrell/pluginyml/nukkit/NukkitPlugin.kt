@@ -26,6 +26,7 @@ package net.minecrell.pluginyml.nukkit
 
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
+import net.minecrell.pluginyml.common.validate
 import org.gradle.api.Project
 
 class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.yml") {
@@ -49,12 +50,6 @@ class NukkitPlugin : PlatformPlugin<NukkitPluginDescription>("Nukkit", "nukkit.y
 
         if (description.api.isNullOrEmpty()) throw InvalidPluginDescriptionException("Nukkit API version is not set")
 
-        for (command in description.commands) {
-            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
-            command.aliases?.forEach { alias ->
-                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
-            }
-        }
+        description.commands.validate()
     }
-
 }

@@ -27,13 +27,15 @@ package net.minecrell.pluginyml.bukkit
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import net.minecrell.pluginyml.collectLibraries
+import net.minecrell.pluginyml.common.validate
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 
 class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.yml") {
 
     companion object {
-        @JvmStatic private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+        @JvmStatic
+        private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
     }
 
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
@@ -60,12 +62,7 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         if (main.isEmpty()) throw InvalidPluginDescriptionException("Main class cannot be empty")
         if (main.startsWith("org.bukkit.")) throw InvalidPluginDescriptionException("Main may not be within the org.bukkit namespace")
 
-        for (command in description.commands) {
-            if (command.name.contains(':')) throw InvalidPluginDescriptionException("Command '${command.name}' cannot contain ':'")
-            command.aliases?.forEach { alias ->
-                if (alias.contains(':')) throw InvalidPluginDescriptionException("Alias '$alias' of '${command.name}' cannot contain ':'")
-            }
-        }
+        description.commands.validate()
 
         if (description.provides?.all(VALID_NAME::matches) == false) {
             throw InvalidPluginDescriptionException("Invalid plugin provides name: all should match $VALID_NAME")

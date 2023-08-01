@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
+import net.minecrell.pluginyml.common.Command
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -66,14 +67,6 @@ class BukkitPluginDescription(project: Project) : PluginDescription() {
     enum class PluginLoadOrder {
         STARTUP,
         POSTWORLD
-    }
-
-    data class Command(@Input @JsonIgnore val name: String) {
-        @Input @Optional var description: String? = null
-        @Input @Optional var aliases: List<String>? = null
-        @Input @Optional var permission: String? = null
-        @Input @Optional @JsonProperty("permission-message") var permissionMessage: String? = null
-        @Input @Optional var usage: String? = null
     }
 
     data class Permission(@Input @JsonIgnore val name: String) {

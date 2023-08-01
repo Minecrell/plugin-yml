@@ -33,6 +33,7 @@ import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder
+import net.minecrell.pluginyml.common.Command
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -41,6 +42,7 @@ import org.gradle.api.tasks.Optional
 
 @JsonNaming(KebabCaseStrategy::class)
 class PaperPluginDescription(project: Project) : PluginDescription() {
+
     @Input var apiVersion: String? = null
     @Input var name: String? = null
     @Input var version: String? = null
@@ -59,8 +61,12 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
     @Input @Optional var hasOpenClassloader: Boolean? = null
     @Input @Optional var foliaSupported: Boolean? = null
 
+    @Nested val commands: NamedDomainObjectContainer<Command> = project.container(Command::class.java)
+    @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
+
     @Nested @Optional @JsonIgnore
     var serverDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
+
     @Nested @Optional @JsonIgnore
     var bootstrapDependencies: NamedDomainObjectContainer<DependencyDefinition> = project.container(DependencyDefinition::class.java)
 
@@ -70,9 +76,8 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
         "bootstrap" to bootstrapDependencies,
     )
 
-    @Nested val permissions: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
-
     // For Groovy DSL
+    fun commands(closure: Closure<Unit>) = commands.configure(closure)
     fun permissions(closure: Closure<Unit>) = permissions.configure(closure)
     fun serverDependencies(closure: Closure<Unit>) = serverDependencies.configure(closure)
     fun bootstrapDependencies(closure: Closure<Unit>) = bootstrapDependencies.configure(closure)
@@ -89,5 +94,4 @@ class PaperPluginDescription(project: Project) : PluginDescription() {
         AFTER,
         OMIT,
     }
-
 }

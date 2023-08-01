@@ -26,6 +26,7 @@ package net.minecrell.pluginyml.paper
 
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
+import net.minecrell.pluginyml.common.validate
 import org.gradle.api.Project
 
 class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugin.yml") {
@@ -33,9 +34,9 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
     companion object {
         @JvmStatic
         private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+
         @JvmStatic
         private val INVALID_NAMESPACES = listOf("net.minecraft.", "org.bukkit.", "io.papermc.paper.", "com.destroystokoyo.paper.")
-
     }
 
     override fun createExtension(project: Project) = PaperPluginDescription(project)
@@ -63,6 +64,8 @@ class PaperPlugin : PlatformPlugin<PaperPluginDescription>("Paper", "paper-plugi
         validateNamespace(description.main, "Main")
         validateNamespace(description.bootstrapper, "Bootstrapper")
         validateNamespace(description.loader, "Loader")
+
+        description.commands.validate()
 
         for (serverDependency in description.serverDependencies) {
             if (serverDependency.name.isEmpty()) throw InvalidPluginDescriptionException("Plugin name in serverDependencies can not be empty")

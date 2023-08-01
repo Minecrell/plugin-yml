@@ -28,5 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.gradle.api.tasks.Input
 
 abstract class PluginDescription {
-    @Input @JsonIgnore var generateLibrariesJson: Boolean = false
+    @Input
+    @JsonIgnore
+    var generateLibrariesJson: Boolean = false
 }

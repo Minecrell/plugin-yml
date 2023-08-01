@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.lang.Closure
 import net.minecrell.pluginyml.PluginDescription
+import net.minecrell.pluginyml.common.Command
+import net.minecrell.pluginyml.common.Permission
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
@@ -61,31 +63,4 @@ class NukkitPluginDescription(project: Project) : PluginDescription() {
         STARTUP,
         POSTWORLD
     }
-
-    data class Command(@Input @JsonIgnore val name: String) {
-        @Input @Optional var description: String? = null
-        @Input @Optional var aliases: List<String>? = null
-        @Input @Optional var permission: String? = null
-        @Input @Optional @JsonProperty("permission-message") var permissionMessage: String? = null
-        @Input @Optional var usage: String? = null
-    }
-
-    class Permission(@Input @JsonIgnore val name: String, project: Project) {
-
-        @Input @Optional var description: String? = null
-        @Input @Optional var default: Default? = null
-
-        @Nested val children: NamedDomainObjectContainer<Permission> = project.container(Permission::class.java)
-
-        // For Groovy DSL
-        fun children(closure: Closure<Unit>) = children.configure(closure)
-
-        enum class Default {
-            @JsonProperty("true")   TRUE,
-            @JsonProperty("false")  FALSE,
-            @JsonProperty("op")     OP,
-            @JsonProperty("!op")    NOT_OP
-        }
-    }
-
 }

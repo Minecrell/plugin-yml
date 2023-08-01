@@ -259,6 +259,17 @@ paper {
         }
     }
 
+    commands {
+        test {
+            description = 'This is a test command!'
+            aliases = ['t']
+            permission = 'testplugin.test'
+            usage = 'Just run the command!'
+            // permissionMessage = 'You may not test this command!'
+        }
+        // ...
+    }
+    
     permissions {
         'testplugin.*' {
             children = ['testplugin.test'] // Defaults permissions to true
@@ -373,6 +384,17 @@ paper {
             required = false
             joinClasspath = false
         }
+    }
+
+    commands {
+        register("test") {
+            description = "This is a test command!"
+            aliases = listOf("t")
+            permission = "testplugin.test"
+            usage = "Just run the command!"
+            // permissionMessage = "You may not test this command!"
+        }
+        // ...
     }
 
     permissions {

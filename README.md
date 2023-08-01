@@ -260,6 +260,7 @@ paper {
     }
 
     commands {
+<<<<<<< HEAD
         test {
             description = 'This is a test command!'
             aliases = ['t']
@@ -270,6 +271,18 @@ paper {
         // ...
     }
     
+=======
+        register("test") {
+            description = "This is a test command!"
+            aliases = listOf("t")
+            permission = "testplugin.test"
+            usage = "Just run the command!"
+            // permissionMessage = "You may not test this command!"
+        }
+        // ...
+    }
+
+>>>>>>> impl-paper-commands
     permissions {
         'testplugin.*' {
             children = ['testplugin.test'] // Defaults permissions to true

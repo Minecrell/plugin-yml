@@ -26,6 +26,7 @@ package net.minecrell.pluginyml
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
@@ -34,7 +35,8 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 
-abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) : Plugin<Project> {
+abstract class PlatformPlugin<T : PluginDescription>(private val platformName: String, private val fileName: String) :
+    Plugin<Project> {
 
     protected abstract fun createExtension(project: Project): T
 
@@ -59,6 +61,10 @@ abstract class PlatformPlugin<T : PluginDescription>(private val platformName: S
                 fileName.set(this@PlatformPlugin.fileName)
                 librariesJsonFileName.set("$prefix-libraries.json")
                 librariesRootComponent.set(libraries.incoming.resolutionResult.root)
+                repos.set(
+                    project.repositories.withType(MavenArtifactRepository::class.java)
+                        .associate { Pair(it.name, it.url.toString()) }
+                )
                 outputDirectory.set(generatedResourcesDirectory)
                 pluginDescription.set(provider {
                     setDefaults(project, description)

@@ -27,7 +27,6 @@ package net.minecrell.pluginyml.bukkit
 import net.minecrell.pluginyml.InvalidPluginDescriptionException
 import net.minecrell.pluginyml.PlatformPlugin
 import net.minecrell.pluginyml.collectLibraries
-import net.minecrell.pluginyml.paper.PaperPlugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 
@@ -36,10 +35,8 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
     companion object {
         @JvmStatic
         private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
-
         @JvmStatic
         private val VALID_API_VERSION = Regex("^1\\.[0-9]+$")
-
         @JvmStatic
         private val INVALID_NAMESPACES = listOf("net.minecraft.", "org.bukkit.", "io.papermc.", "com.destroystokoyo.paper.", "org.spigotmc")
     }

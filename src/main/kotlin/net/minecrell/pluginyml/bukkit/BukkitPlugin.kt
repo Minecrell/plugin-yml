@@ -35,10 +35,13 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
     companion object {
         @JvmStatic
         private val VALID_NAME = Regex("^[A-Za-z0-9 _.-]+$")
+
         @JvmStatic
         private val VALID_API_VERSION = Regex("^1\\.[0-9]+$")
+
         @JvmStatic
-        private val INVALID_NAMESPACES = listOf("net.minecraft.", "org.bukkit.", "io.papermc.", "com.destroystokoyo.paper.", "org.spigotmc")
+        private val INVALID_NAMESPACES =
+            listOf("net.minecraft.", "org.bukkit.", "io.papermc.", "com.destroystokoyo.paper.", "org.spigotmc")
     }
 
     override fun createExtension(project: Project) = BukkitPluginDescription(project)
@@ -60,8 +63,16 @@ class BukkitPlugin : PlatformPlugin<BukkitPluginDescription>("Bukkit", "plugin.y
         if (!VALID_NAME.matches(name)) throw InvalidPluginDescriptionException("Invalid plugin name: should match $VALID_NAME")
         if (description.apiVersion != null) {
             val apiVersion = description.apiVersion!!
-            if (!VALID_API_VERSION.matches(apiVersion)) throw InvalidPluginDescriptionException("Invalid api version: should match $VALID_API_VERSION")
-            if (apiVersion < "1.13") throw InvalidPluginDescriptionException("Invalid api version: should be at least 1.13")
+            val splitVersion = apiVersion.split("\\.").map { v -> v.toInt() }
+            if (splitVersion.size == 2) {
+                if (!VALID_API_VERSION.matches(apiVersion)) throw InvalidPluginDescriptionException("Invalid api version: should match $VALID_API_VERSION")
+                if (apiVersion < "1.13") throw InvalidPluginDescriptionException("Invalid api version: should be at least 1.13")
+            } else if (splitVersion.size == 3) {
+                if (splitVersion[1] < 20) throw InvalidPluginDescriptionException("Invalid api version: Minor versions are not supported before 1.20.5")
+                if (splitVersion[1] == 20 && splitVersion[2] < 5) throw InvalidPluginDescriptionException("Invalid api version: Minor versions are not supported before 1.20.5")
+            } else {
+                throw InvalidPluginDescriptionException("Invalid api version: $VALID_API_VERSION")
+            }
         }
 
         if (description.version.isNullOrEmpty()) throw InvalidPluginDescriptionException("Plugin version is not set")

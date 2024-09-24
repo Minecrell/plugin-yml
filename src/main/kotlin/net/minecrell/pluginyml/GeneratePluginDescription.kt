@@ -33,6 +33,8 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import net.minecrell.pluginyml.bukkit.BukkitPlugin
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
@@ -83,7 +85,17 @@ abstract class GeneratePluginDescription : DefaultTask() {
             .registerModule(module)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
         val pluginDescription = pluginDescription.get()
+        val librariesBak: List<String>?
+        if (pluginDescription is BukkitPluginDescription && pluginDescription.noLibrariesSection) {
+            librariesBak = pluginDescription.libraries
+            pluginDescription.libraries = null
+        } else {
+            librariesBak = null
+        }
         mapper.writeValue(outputDirectory.file(fileName).get().asFile, pluginDescription)
+        if (librariesBak != null) {
+            (pluginDescription as BukkitPluginDescription).libraries = librariesBak
+        }
 
         if (pluginDescription.generateLibrariesJson) {
             val repos = this.project.repositories.withType(MavenArtifactRepository::class.java)

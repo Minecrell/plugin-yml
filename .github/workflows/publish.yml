@@ -1,0 +1,25 @@
+name: Publish
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish_gradle:
+    name: Publish to gradle portal
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: gradle/wrapper-validation-action@v3
+      - name: Setup JDK
+        uses: actions/setup-java@v4.5.0
+        with:
+          java-version: 11
+          cache: 'gradle'
+          distribution: 'temurin'
+      - name: build
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+        run: ./gradlew publishPlugin

@@ -1,8 +1,8 @@
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
-    id("com.gradle.plugin-publish") version "1.2.0"
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("com.gradle.plugin-publish") version "1.3.0"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 val url: String by extra
@@ -12,44 +12,53 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2") {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1") {
         exclude(group = "org.jetbrains.kotlin")
     }
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1")
+}
+
+spotless {
+    kotlin{
+        licenseHeaderFile(rootProject.file("HEADER.txt"))
+    }
+    java {
+        target("**/*.java")
+    }
 }
 
 gradlePlugin {
-    website.set(url)
-    vcsUrl.set(url)
+    website = url
+    vcsUrl = url
 
     plugins {
         register("bukkit") {
-            id = "net.minecrell.plugin-yml.bukkit"
+            id = "de.eldoria.plugin-yml.bukkit"
             displayName = "plugin-yml (Bukkit)"
             description = "Generate plugin.yml for Bukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bukkit.BukkitPlugin"
-            tags.set(listOf("bukkit"))
+            tags = listOf("bukkit")
         }
         register("bungee") {
-            id = "net.minecrell.plugin-yml.bungee"
+            id = "de.eldoria.plugin-yml.bungee"
             displayName = "plugin-yml (BungeeCord)"
             description = "Generate bungee.yml for BungeeCord plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.bungee.BungeePlugin"
-            tags.set(listOf("bungee"))
+            tags = listOf("bungee")
         }
         register("nukkit") {
-            id = "net.minecrell.plugin-yml.nukkit"
+            id = "de.eldoria.plugin-yml.nukkit"
             displayName = "plugin-yml (Nukkit)"
             description = "Generate nukkit.yml for Nukkit plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.nukkit.NukkitPlugin"
-            tags.set(listOf("nukkit"))
+            tags = listOf("nukkit")
         }
         register("paper") {
-            id = "net.minecrell.plugin-yml.paper"
+            id = "de.eldoria.plugin-yml.paper"
             displayName = "plugin-yml (Paper)"
             description = "Generate paper-plugin.yml for Paper plugins based on the Gradle project"
             implementationClass = "net.minecrell.pluginyml.paper.PaperPlugin"
-            tags.set(listOf("paper"))
+            tags = listOf("paper")
         }
     }
 }
